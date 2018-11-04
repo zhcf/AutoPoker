@@ -15,28 +15,37 @@ class GameTable:
     def __init__(self, rect):
         self.rect = rect
 
-    def get_hand_cards(self):
-        rect = Rect(self.rect.x,
-            self.rect.y + HAND_CARDS_Y_OFFSET,
-            self.rect.w,
-            self.rect.h - HAND_CARDS_Y_OFFSET)
+    def get_cards(self):
+        table_cards = []
         hand_cards = []
-        card_anchor_rects = find_all_in_rect(CARD_ANCHOR, rect)
-        for card_anchor_rect in card_anchor_rects:
-            hand_cards.append(self.__get_card(card_anchor_rect))
-        return hand_cards
+        table_card_rect = Rect(self.rect.x + TABLE_CARD_OFFSET_X,
+            self.rect.y + TABLE_CARD_OFFSET_Y,
+            TABLE_CARD_WIDTH,
+            TABLE_CARD_HEIGHT)
+        card_anchors = find_all_in_rect(CARD_ANCHOR, self.rect)
+        for card_anchor in card_anchors:
+            card = self.__get_card(card_anchor)
+            if table_card_rect.is_point_in(card_anchor.x, card_anchor.y):
+                table_cards.append(card)
+            else:
+                hand_cards.append(card)
+        return (table_cards, hand_cards)
 
     def __get_card(self, anchor_rect):
-        color_rect = Rect(anchor_rect.x + CARD_COLOR_X_OFFSET,
-            anchor_rect.y + CARD_COLOR_Y_OFFSET,
+        color_rect = Rect(anchor_rect.x + CARD_COLOR_OFFSET_X,
+            anchor_rect.y + CARD_COLOR_OFFSET_Y,
             CARD_COLOR_WIDTH,
             CARD_COLOR_HEIGHT)
         color = self.__get_card_color(color_rect)
-        value_rect = Rect(anchor_rect.x + CARD_VALUE_X_OFFSET,
-            anchor_rect.y + CARD_VALUE_Y_OFFSET,
+        if color is None:
+            return None
+        value_rect = Rect(anchor_rect.x + CARD_VALUE_OFFSET_X,
+            anchor_rect.y + CARD_VALUE_OFFSET_Y,
             CARD_VALUE_WIDTH,
             CARD_VALUE_HEIGHT)
         value = self.__get_card_value(value_rect, color)
+        if value is None:
+            return None
         return (value, color)
 
     def __get_card_value(self, rect, color):

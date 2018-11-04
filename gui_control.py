@@ -31,6 +31,12 @@ class Rect:
     def to_string(self):
         return ("[%d, %d, %d, %d]" % (self.x, self.y, self.w, self.h))
 
+    def is_point_in(self, x, y):
+        if self.x <= x and x <= self.x + self.w and self.y <= y and y <= self.y + self.h:
+            return True
+        else:
+            return False
+
 
 def find_in_screen(image_filename):
     global g_screen
@@ -38,7 +44,7 @@ def find_in_screen(image_filename):
         match = g_screen.find(image_filename)
         return Rect(match.getX(), match.getY(), match.getW(), match.getH())
     except FindFailed:
-        logging.error("Can't find %s on screen." % image_filename)
+        logging.debug("Can't find %s on screen." % image_filename)
         return None
 
 def find_in_rect(image_filename, rect):
@@ -53,7 +59,7 @@ def find_in_rect(image_filename, rect):
         match = region.find(image_filename)
         return Rect(match.getX(), match.getY(), match.getW(), match.getH())
     except FindFailed:
-        logging.error("Can't find %s on %s." % (image_filename, rect.to_string()))
+        logging.debug("Can't find %s on %s." % (image_filename, rect.to_string()))
         return None
 
 def find_all_in_rect(image_filename, rect):
@@ -72,7 +78,7 @@ def find_all_in_rect(image_filename, rect):
             result.append(Rect(match.getX(), match.getY(), match.getW(), match.getH()))
         return result
     except FindFailed:
-        logging.error("Can't find %s on %s." % (image_filename, rect.to_string()))
+        logging.debug("Can't find %s on %s." % (image_filename, rect.to_string()))
         return []
 
 def get_string_from_rect(rect):
