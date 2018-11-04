@@ -25,6 +25,7 @@ while True:
     if cmd == 'exit':
         break
     t1 = time.time()
+
     table = GameTable(table_rect)
     actions = table.get_avail_actions()
     print("Action:")
@@ -38,6 +39,10 @@ while True:
     print("Hand cards:")
     for card in hand_cards:
         print(card)
+
+    pot = table.get_pot()
+    print("Pot: %f" % pot)
+    
     t2 = time.time()
     print("Time pass: %f" % (t2 - t1))
 

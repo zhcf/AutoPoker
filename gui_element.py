@@ -44,3 +44,6 @@ TABLE_CARD_OFFSET_X = 200
 TABLE_CARD_OFFSET_Y = 170
 TABLE_CARD_WIDTH = 370
 TABLE_CARD_HEIGHT = 80
+
+POT_LEFT = 'images/pot_left.png'
+POT_RIGHT = 'images/pot_right.png'

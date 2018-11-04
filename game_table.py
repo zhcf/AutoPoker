@@ -15,6 +15,26 @@ class GameTable:
     def __init__(self, rect):
         self.rect = rect
 
+    def get_pot(self):
+        pot_left_rect = find_in_rect(POT_LEFT, self.rect)
+        if pot_left_rect is None:
+            return None
+        MARGIN = 10
+        search_rect = Rect(pot_left_rect.x,
+            pot_left_rect.y - MARGIN,
+            (self.rect.x + self.rect.w) - (pot_left_rect.x + pot_left_rect.w),
+            MARGIN * 2)
+        pot_right_rect = find_in_rect(POT_RIGHT, search_rect)
+        if pot_right_rect is None:
+            return None
+        pot_rect = Rect(pot_left_rect.x + pot_left_rect.w,
+            pot_left_rect.y,
+            pot_right_rect.x - (pot_left_rect.x + pot_left_rect.w),
+            pot_left_rect.h)
+        pot_str = get_string_from_rect(pot_rect)
+        pot_str = str.replace(pot_str, ',', '')
+        return float(pot_str)
+
     def get_cards(self):
         table_cards = []
         hand_cards = []
