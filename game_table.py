@@ -16,7 +16,9 @@ class GameTable:
         self.rect = rect
 
     def wait_for_action(self):
-        wait_all(self.rect, [BET_MIN, BET_MAX])
+        wait_for_any(self.rect, [BET_MIN, BET_MAX,
+            ACTION_FOLD, ACTION_CHECK, ACTION_CALL,
+            ACTION_BET, ACTION_RAISE_TO])
 
     def get_pot(self):
         pot_left_rect = find_in_rect(POT_LEFT, self.rect)

@@ -134,23 +134,33 @@ def __compare_image(image1, image2):
     else:
         return False
 
-def wait_all(rect, image_files):
+# def wait_for_all(rect, image_files):
+#     global g_screen
+#     region = Region(rect.x, rect.y, rect.w, rect.h)
+#     region.initScreen(g_screen)
+#     while True:
+#         if not region.exists(image_files[0]):
+#             time.sleep(1)
+#             continue
+#         all_exist = True
+#         for image_file in image_files:
+#             if image_file != image_files[0]:
+#                 if not region.exists(image_file):
+#                     all_exist = False
+#                     break
+#         if all_exist:
+#             break
+#     return
+
+def wait_for_any(rect, image_files):
     global g_screen
     region = Region(rect.x, rect.y, rect.w, rect.h)
     region.initScreen(g_screen)
     while True:
-        if not region.exists(image_files[0]):
-            time.sleep(1)
-            continue
-        all_exist = True
         for image_file in image_files:
-            if image_file != image_files[0]:
-                if not region.exists(image_file):
-                    all_exist = False
-                    break
-        if all_exist:
-            break
-    return
+            if region.exists(image_file):
+                return
+        time.sleep(1)
 
 def click_in_rect(rect, image_filename):
     global g_screen
