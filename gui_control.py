@@ -1,10 +1,12 @@
 from jpype import *
 from PIL import Image
 from functools import reduce
+from operator import attrgetter
 import operator
 import logging
 import pytesseract
 import math
+
 
 # JRE_PATH = r'C:\Java\jre1.8.0_111\bin\server\jvm.dll'
 # SIKULI_PATH = r'D:\projects\AutoPoker\sikulixapi.jar'
@@ -76,6 +78,7 @@ def find_all_in_rect(image_filename, rect):
         while match_iter.hasNext():
             match = match_iter.next()
             result.append(Rect(match.getX(), match.getY(), match.getW(), match.getH()))
+        result.sort(key=attrgetter('x'))
         return result
     except FindFailed:
         logging.debug("Can't find %s on %s." % (image_filename, rect.to_string()))
@@ -105,6 +108,21 @@ def compare_rect(rect, image_file):
     rect_image_file = g_screen.capture(region).getFile()
     image1 = Image.open(rect_image_file)
     image2 = Image.open(image_file)
+    return __compare_image(image1, image2)
+
+def batch_compare_rect(rect, image_files):
+    global g_screen
+    region = Region(rect.x, rect.y, rect.w, rect.h)
+    region.initScreen(g_screen)
+    rect_image_file = g_screen.capture(region).getFile()
+    rect_image = Image.open(rect_image_file)
+    for index, image_file in enumerate(image_files):
+        image = Image.open(image_file)
+        if __compare_image(rect_image, image):
+            return index
+    return -1
+
+def __compare_image(image1, image2):
     h1 = image1.histogram()
     h2 = image2.histogram()
     result = math.sqrt(reduce(operator.add, list(map(lambda a,b: (a-b)**2, h1, h2)))/len(h1))

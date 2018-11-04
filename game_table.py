@@ -50,35 +50,39 @@ class GameTable:
 
     def __get_card_value(self, rect, color):
         if color == 'S' or color == 'C':
-            index = 0
+            color_index = 0
         if color == 'D' or color == 'H':
-            index = 1
-        all_values = [('A', CARD_VALUE_A[index]),
-            ('2', CARD_VALUE_2[index]),
-            ('3', CARD_VALUE_3[index]),
-            ('4', CARD_VALUE_4[index]),
-            ('5', CARD_VALUE_5[index]),
-            ('6', CARD_VALUE_6[index]),
-            ('7', CARD_VALUE_7[index]),
-            ('8', CARD_VALUE_8[index]),
-            ('9', CARD_VALUE_9[index]),
-            ('10', CARD_VALUE_10[index]),
-            ('J', CARD_VALUE_J[index]),
-            ('Q', CARD_VALUE_Q[index]),
-            ('K', CARD_VALUE_K[index])]
-        for value in all_values:
-            if compare_rect(rect, value[1]):
-                return value[0]
+            color_index = 1
+        card_value_dict = {
+            'A': CARD_VALUE_A[color_index],
+            '2': CARD_VALUE_2[color_index],
+            '3': CARD_VALUE_3[color_index],
+            '4': CARD_VALUE_4[color_index],
+            '5': CARD_VALUE_5[color_index],
+            '6': CARD_VALUE_6[color_index],
+            '7': CARD_VALUE_7[color_index],
+            '8': CARD_VALUE_8[color_index],
+            '9': CARD_VALUE_9[color_index],
+            '10': CARD_VALUE_10[color_index],
+            'J': CARD_VALUE_J[color_index],
+            'Q': CARD_VALUE_Q[color_index],
+            'K': CARD_VALUE_K[color_index]
+            }
+        value_index = batch_compare_rect(rect, list(card_value_dict.values()))
+        if value_index >= 0:
+            return list(card_value_dict.keys())[value_index]
         return None
 
     def __get_card_color(self, rect):
-        all_colors = [('C', CARD_COLOR_C),
-            ('D', CARD_COLOR_D),
-            ('H', CARD_COLOR_H),
-            ('S', CARD_COLOR_S)]
-        for color in all_colors:
-            if compare_rect(rect, color[1]):
-                return color[0]
+        card_color_dict = {
+            'C': CARD_COLOR_C,
+            'D': CARD_COLOR_D,
+            'H': CARD_COLOR_H,
+            'S': CARD_COLOR_S
+            }
+        color_index = batch_compare_rect(rect, list(card_color_dict.values()))
+        if color_index >= 0:
+            return list(card_color_dict.keys())[color_index]
         return None
 
     def get_avail_actions(self):
