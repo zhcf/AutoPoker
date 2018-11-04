@@ -6,6 +6,7 @@ import operator
 import logging
 import pytesseract
 import math
+import time
 
 
 # JRE_PATH = r'C:\Java\jre1.8.0_111\bin\server\jvm.dll'
@@ -132,5 +133,30 @@ def __compare_image(image1, image2):
     else:
         return False
 
-def click_rect(rect):
-    return None
+def wait_all(rect, image_files):
+    global g_screen
+    region = Region(rect.x, rect.y, rect.w, rect.h)
+    region.initScreen(g_screen)
+    while True:
+        if not region.exists(image_files[0]):
+            time.sleep(1)
+            continue
+        all_exist = True
+        for image_file in image_files:
+            if image_file != image_files[0]:
+                if not region.exists(image_file):
+                    all_exist = False
+                    break
+        if all_exist:
+            break
+    return
+
+def click_in_rect(rect, image_filename):
+    global g_screen
+    try:
+        region = Region(rect.x, rect.y, rect.w, rect.h)
+        region.initScreen(g_screen)
+        region.click(image_filename)
+    except FindFailed:
+        logging.debug("Can't click %s on %s." % (image_filename, rect.to_string()))
+        return []

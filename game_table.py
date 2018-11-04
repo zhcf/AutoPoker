@@ -1,6 +1,6 @@
 from gui_element import *
 from gui_control import *
-
+import logging
 
 class GameAction:
     def __init__(self, action, bet_amount):
@@ -14,6 +14,9 @@ class GameAction:
 class GameTable:
     def __init__(self, rect):
         self.rect = rect
+
+    def wait_for_action(self):
+        wait_all(self.rect, [BET_MIN, BET_MAX])
 
     def get_pot(self):
         pot_left_rect = find_in_rect(POT_LEFT, self.rect)
@@ -29,7 +32,7 @@ class GameTable:
             return None
         pot_rect = Rect(pot_left_rect.x + pot_left_rect.w,
             pot_left_rect.y,
-            pot_right_rect.x - (pot_left_rect.x + pot_left_rect.w),
+            (pot_right_rect.x + pot_right_rect.w) - (pot_left_rect.x + pot_left_rect.w),
             pot_left_rect.h)
         pot_str = get_string_from_rect(pot_rect)
         pot_str = str.replace(pot_str, ',', '')
@@ -130,3 +133,17 @@ class GameTable:
         amount_str = get_string_from_rect(bet_amount_rect)
         amount_str = str.replace(amount_str, ',', '')
         return float(amount_str)
+
+    def do_action(self, action):
+        if action.action == 'fold':
+            click_in_rect(self.rect, ACTION_FOLD)
+        elif action.action == 'check':
+            click_in_rect(self.rect, ACTION_CHECK)
+        elif action.action == 'call':
+            click_in_rect(self.rect, ACTION_CALL)
+        elif action.action == 'bet':
+            click_in_rect(self.rect, ACTION_BET)
+        elif action.action == 'raise_to':
+            click_in_rect(self.rect, ACTION_RAISE_TO)
+        else:
+            logging.error("Invalid action: %s" % action.to_string())

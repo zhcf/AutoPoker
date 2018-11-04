@@ -1,8 +1,14 @@
 from gui_element import *
 from gui_control import *
 from game_table import *
+from play_engine import *
+from pokers.junior import Junior
 import time
 import sys
+import logging
+
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 window_rect = find_in_screen(WINDOW_TOP_LEFT)
 if window_rect is None:
@@ -20,31 +26,12 @@ table_rect.h = TABLE_HEIGHT
 table_rect.w = TABLE_WIDTH
 print("Game table found: %s" % table_rect.to_string())
 
-while True:
-    cmd = input("Input something to continue...")
-    if cmd == 'exit':
-        break
-    t1 = time.time()
+table = GameTable(table_rect)
+junior_poker = Junior()
 
-    table = GameTable(table_rect)
-    actions = table.get_avail_actions()
-    print("Action:")
-    for action in actions:
-        print(action.to_string())
+engine = PlayEngine(table, junior_poker)
+engine.play()
 
-    (table_cards, hand_cards) = table.get_cards()
-    print("Table cards:")
-    for card in table_cards:
-        print(card)
-    print("Hand cards:")
-    for card in hand_cards:
-        print(card)
-
-    pot = table.get_pot()
-    print("Pot: %f" % pot)
-    
-    t2 = time.time()
-    print("Time pass: %f" % (t2 - t1))
 
 # card_anchors = find_all_in_rect(CARD_ANCHOR, table_rect)
 # print(card_anchors)

@@ -47,3 +47,6 @@ TABLE_CARD_HEIGHT = 80
 
 POT_LEFT = 'images/pot_left.png'
 POT_RIGHT = 'images/pot_right.png'
+
+BET_MIN = 'images/bet_min.png'
+BET_MAX = 'images/bet_max.png'
