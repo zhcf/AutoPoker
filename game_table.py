@@ -34,9 +34,8 @@ class GameTable:
             pot_left_rect.y,
             (pot_right_rect.x + pot_right_rect.w) - (pot_left_rect.x + pot_left_rect.w),
             pot_left_rect.h)
-        pot_str = get_string_from_rect(pot_rect)
-        pot_str = str.replace(pot_str, ',', '')
-        return float(pot_str)
+        pot = get_number_from_rect(pot_rect)
+        return pot
 
     def get_cards(self):
         table_cards = []
@@ -130,9 +129,8 @@ class GameTable:
             action_rect.y + action_rect.h,
             action_rect.w,
             ACTION_HEIGHT - action_rect.h)
-        amount_str = get_string_from_rect(bet_amount_rect)
-        amount_str = str.replace(amount_str, ',', '')
-        return float(amount_str)
+        bet_amount = get_number_from_rect(bet_amount_rect)
+        return bet_amount
 
     def do_action(self, action):
         if action.action == 'fold':

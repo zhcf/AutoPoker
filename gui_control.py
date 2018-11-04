@@ -85,7 +85,7 @@ def find_all_in_rect(image_filename, rect):
         logging.debug("Can't find %s on %s." % (image_filename, rect.to_string()))
         return []
 
-def get_string_from_rect(rect):
+def get_number_from_rect(rect):
     global g_screen
     region = Region(rect.x, rect.y, rect.w, rect.h)
     region.initScreen(g_screen)
@@ -99,8 +99,9 @@ def get_string_from_rect(rect):
         width = int(float(rect.w) * rate)
         image = image.resize((width, MIN_OCR_HEIGHT), Image.ANTIALIAS)
         image.save(image_file)
-    result = pytesseract.image_to_string(image_file)
-    return result
+    tesseract_config = r'--oem 0 -c tessedit_char_whitelist=0123456789'
+    result = pytesseract.image_to_string(image_file, config=tesseract_config)
+    return float(result)
 
 def compare_rect(rect, image_file):
     global g_screen
