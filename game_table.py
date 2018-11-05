@@ -87,7 +87,7 @@ class GameTable:
             '7': CARD_VALUE_7[color_index],
             '8': CARD_VALUE_8[color_index],
             '9': CARD_VALUE_9[color_index],
-            '10': CARD_VALUE_10[color_index],
+            'T': CARD_VALUE_T[color_index],
             'J': CARD_VALUE_J[color_index],
             'Q': CARD_VALUE_Q[color_index],
             'K': CARD_VALUE_K[color_index]

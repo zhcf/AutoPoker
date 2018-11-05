@@ -102,6 +102,7 @@ def get_number_from_rect(rect):
     tesseract_config = r'--oem 0 -c tessedit_char_whitelist=0123456789,'
     result = pytesseract.image_to_string(image_file, config=tesseract_config)
     result = result.replace(',', '')
+    result = result.replace(' ', '')
     return float(result)
 
 def compare_rect(rect, image_file):
