@@ -12,8 +12,9 @@ class GameAction:
 
 
 class GameTable:
-    def __init__(self, rect):
+    def __init__(self, rect, queue):
         self.rect = rect
+        self.queue = queue
 
     def wait_for_action(self):
         wait_for_any(self.rect, [BET_MIN, BET_MAX,
@@ -136,14 +137,19 @@ class GameTable:
 
     def do_action(self, action):
         if action.action == 'fold':
-            click_in_rect(self.rect, ACTION_FOLD)
+            #click_in_rect(self.rect, ACTION_FOLD)
+            self.queue.put(('click', self.rect, ACTION_FOLD))
         elif action.action == 'check':
-            click_in_rect(self.rect, ACTION_CHECK)
+            #click_in_rect(self.rect, ACTION_CHECK)
+            self.queue.put(('click', self.rect, ACTION_CHECK))
         elif action.action == 'call':
-            click_in_rect(self.rect, ACTION_CALL)
+            #click_in_rect(self.rect, ACTION_CALL)
+            self.queue.put(('click', self.rect, ACTION_CALL))
         elif action.action == 'bet':
-            click_in_rect(self.rect, ACTION_BET)
+            #click_in_rect(self.rect, ACTION_BET)
+            self.queue.put(('click', self.rect, ACTION_BET))
         elif action.action == 'raise_to':
-            click_in_rect(self.rect, ACTION_RAISE_TO)
+            #click_in_rect(self.rect, ACTION_RAISE_TO)
+            self.queue.put(('click', self.rect, ACTION_RAISE_TO))
         else:
             logging.error("Invalid action: %s" % action.to_string())

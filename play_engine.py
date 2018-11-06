@@ -1,22 +1,12 @@
 import logging
 import time
 import role_utils as utils
-import threading
 
 class PlayEngine:
     def __init__(self, code, table, poker):
         self.code = code
         self.table = table
         self.poker = poker
-        self.thread = None
-
-    def start(self):
-        self.thread = threading.Thread(target=self.play)
-        self.thread.start()
-
-    def join(self):
-        if self.thread is not None:
-            self.thread.join()
 
     def play(self):
         while True:
@@ -42,7 +32,7 @@ class PlayEngine:
                     break
             if action is None:
                 action = sorted_avail_actions[0]
-            logging.info(self.__unique_output("Real action: %s", action.to_string()))
+            logging.info(self.__unique_output("Real action: %s" % action.to_string()))
             # Take action
             self.table.do_action(action)
             time.sleep(2)

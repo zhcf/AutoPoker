@@ -50,6 +50,20 @@ def find_in_screen(image_filename):
         logging.debug("Can't find %s on screen." % image_filename)
         return None
 
+def find_all_in_screen(image_filename):
+    global g_screen
+    try:
+        match_iter = g_screen.findAll(image_filename)
+        result = []
+        while match_iter.hasNext():
+            match = match_iter.next()
+            result.append(Rect(match.getX(), match.getY(), match.getW(), match.getH()))
+        result.sort(key=attrgetter('x'))
+        return result
+    except FindFailed:
+        logging.debug("Can't find %s on screen." % image_filename)
+        return None
+
 def find_in_rect(image_filename, rect):
     global g_screen
     MARGIN = 20
