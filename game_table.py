@@ -21,6 +21,64 @@ class GameTable:
             ACTION_FOLD, ACTION_CHECK, ACTION_CALL,
             ACTION_BET, ACTION_RAISE_TO])
 
+    def get_poker(self):
+        balance = self.__get_poker_balance()
+        return balance
+
+    def __get_poker_balance(self):
+        balance_rect = Rect(self.rect.x + POKER_OFFSET_X,
+            self.rect.y + POKER_OFFSET_Y,
+            PLAYER_BALANCE_WIDTH,
+            PLAYER_BALANCE_HEIGHT)
+        return get_number_from_rect(balance_rect)
+
+    def get_players(self):
+        players = dict()
+        player_anchors_left = find_all_in_rect(PLAYER_ANCHOR_LEFT, self.rect)
+        player_anchors_right = find_all_in_rect(PLAYER_ANCHOR_RIGHT, self.rect)
+        player_anchors_combine = [('left', player_anchors_left), ('right', player_anchors_right)]
+        for player_anchors in player_anchors_combine:
+            direct = player_anchors[0]
+            for anchor in player_anchors[1]:
+                if self.__is_poker_myself(anchor):
+                    continue
+                code = self.__get_player_identity(anchor)
+                balance = self.__get_player_balance(anchor, direct)
+                if balance is not None:
+                    players[code] = balance
+        return players
+
+    def __get_player_identity(self, anchor_rect):
+        return "%dX%d" % (anchor_rect.x, anchor_rect.y)
+
+    def __get_player_balance(self, anchor_rect, position):
+        if position == 'left':
+            balance_rect = Rect(anchor_rect.x + anchor_rect.w,
+                anchor_rect.y,
+                PLAYER_BALANCE_WIDTH,
+                PLAYER_BALANCE_HEIGHT)
+        if position == 'right':
+            balance_rect = Rect(anchor_rect.x - PLAYER_BALANCE_WIDTH,
+                anchor_rect.y,
+                PLAYER_BALANCE_WIDTH,
+                PLAYER_BALANCE_HEIGHT)
+        balance_str = get_string_from_rect(balance_rect)
+        if balance_str == 'Sitting Out':
+            return None
+        else:
+            return get_number_from_rect(balance_rect)
+
+    def __is_poker_myself(self, anchor_rect):
+        check_rect = Rect(self.rect.x + POKER_OFFSET_X - POKER_RANGE_MARGIN,
+            self.rect.y + POKER_OFFSET_Y - POKER_RANGE_MARGIN,
+            PLAYER_BALANCE_WIDTH + 2 * POKER_RANGE_MARGIN,
+            PLAYER_BALANCE_HEIGHT + 2 * POKER_RANGE_MARGIN)
+        if check_rect.x <= anchor_rect.x and anchor_rect.x <= (check_rect.x + check_rect.w) \
+            and check_rect.y <= anchor_rect.y and anchor_rect.y <= (check_rect.y + check_rect.h):
+            return True
+        else:
+            return False
+
     def get_pot(self):
         pot_left_rect = find_in_rect(POT_LEFT, self.rect)
         if pot_left_rect is None:

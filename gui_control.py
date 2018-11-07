@@ -119,6 +119,24 @@ def get_number_from_rect(rect):
     result = result.replace(' ', '')
     return float(result)
 
+def get_string_from_rect(rect):
+    global g_screen
+    region = Region(rect.x, rect.y, rect.w, rect.h)
+    region.initScreen(g_screen)
+    image_file = g_screen.capture(region).getFile()
+    # The OCR min height is 30
+    MIN_OCR_HEIGHT = 27
+    if rect.h < MIN_OCR_HEIGHT:
+        image = Image.open(image_file)
+        image = image.convert('L')
+        rate = float(MIN_OCR_HEIGHT) / float(rect.h)
+        width = int(float(rect.w) * rate)
+        image = image.resize((width, MIN_OCR_HEIGHT), Image.ANTIALIAS)
+        image.save(image_file)
+    tesseract_config = r'--oem 0'
+    result = pytesseract.image_to_string(image_file, config=tesseract_config)
+    return result
+
 def compare_rect(rect, image_file):
     global g_screen
     region = Region(rect.x, rect.y, rect.w, rect.h)

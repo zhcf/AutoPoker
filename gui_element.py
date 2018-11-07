@@ -50,3 +50,12 @@ POT_RIGHT = 'images/pot_right.png'
 
 BET_MIN = 'images/bet_min.png'
 BET_MAX = 'images/bet_max.png'
+
+PLAYER_ANCHOR_LEFT = 'images/player_anchor_left.png'
+PLAYER_ANCHOR_RIGHT = 'images/player_anchor_right.png'
+PLAYER_BALANCE_WIDTH = 93
+PLAYER_BALANCE_HEIGHT = 22
+
+POKER_OFFSET_X = 372
+POKER_OFFSET_Y = 400
+POKER_RANGE_MARGIN = 30
