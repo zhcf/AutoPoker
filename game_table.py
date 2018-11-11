@@ -1,6 +1,7 @@
 from gui_element import *
 from gui_control import *
 import logging
+import role_utils as utils
 
 class GameAction:
     def __init__(self, action, bet_amount):
@@ -26,58 +27,47 @@ class GameTable:
         return balance
 
     def __get_poker_balance(self):
-        balance_rect = Rect(self.rect.x + POKER_OFFSET_X,
-            self.rect.y + POKER_OFFSET_Y,
-            PLAYER_BALANCE_WIDTH,
-            PLAYER_BALANCE_HEIGHT)
+        balance_rect = Rect(self.rect.x + POKER_BALANCE_OFFSET_X,
+            self.rect.y + POKER_BALANCE_OFFSET_Y,
+            BALANCE_WIDTH,
+            BALANCE_HEIGHT)
         return get_number_from_rect(balance_rect)
 
     def get_players(self):
         players = dict()
-        player_anchors_left = find_all_in_rect(PLAYER_ANCHOR_LEFT, self.rect)
-        player_anchors_right = find_all_in_rect(PLAYER_ANCHOR_RIGHT, self.rect)
-        player_anchors_combine = [('left', player_anchors_left), ('right', player_anchors_right)]
-        for player_anchors in player_anchors_combine:
-            direct = player_anchors[0]
-            for anchor in player_anchors[1]:
-                if self.__is_poker_myself(anchor):
-                    continue
-                code = self.__get_player_identity(anchor)
-                balance = self.__get_player_balance(anchor, direct)
-                if balance is not None:
-                    players[code] = balance
+        player_anchors = find_all_in_rect(PLAYER_ANCHOR, self.rect)
+        for anchor in player_anchors:
+            code = self.__get_player_identity(anchor)
+            balance = self.__get_player_balance(anchor)
+            if balance is not None:
+                players[code] = balance
         return players
 
     def __get_player_identity(self, anchor_rect):
         return "%dX%d" % (anchor_rect.x, anchor_rect.y)
 
-    def __get_player_balance(self, anchor_rect, position):
-        if position == 'left':
-            balance_rect = Rect(anchor_rect.x + anchor_rect.w,
-                anchor_rect.y,
-                PLAYER_BALANCE_WIDTH,
-                PLAYER_BALANCE_HEIGHT)
-        if position == 'right':
-            balance_rect = Rect(anchor_rect.x - PLAYER_BALANCE_WIDTH,
-                anchor_rect.y,
-                PLAYER_BALANCE_WIDTH,
-                PLAYER_BALANCE_HEIGHT)
-        balance_str = get_string_from_rect(balance_rect)
-        if balance_str == 'Sitting Out':
-            return None
-        else:
-            return get_number_from_rect(balance_rect)
+    def __get_player_balance(self, anchor_rect):
+        balance_rect = Rect(anchor_rect.x + PLAYER_BALANCE_OFFSET_X,
+            anchor_rect.y + PLAYER_BALANCE_OFFSET_Y,
+            BALANCE_WIDTH,
+            BALANCE_HEIGHT)
+        return get_number_from_rect(balance_rect)
+        # balance_str = get_string_from_rect(balance_rect)
+        # if balance_str == 'Sitting Out':
+        #     return None
+        # else:
+        #     return get_number_from_rect(balance_rect)
 
-    def __is_poker_myself(self, anchor_rect):
-        check_rect = Rect(self.rect.x + POKER_OFFSET_X - POKER_RANGE_MARGIN,
-            self.rect.y + POKER_OFFSET_Y - POKER_RANGE_MARGIN,
-            PLAYER_BALANCE_WIDTH + 2 * POKER_RANGE_MARGIN,
-            PLAYER_BALANCE_HEIGHT + 2 * POKER_RANGE_MARGIN)
-        if check_rect.x <= anchor_rect.x and anchor_rect.x <= (check_rect.x + check_rect.w) \
-            and check_rect.y <= anchor_rect.y and anchor_rect.y <= (check_rect.y + check_rect.h):
-            return True
-        else:
-            return False
+    # def __is_poker_myself(self, anchor_rect):
+    #     check_rect = Rect(self.rect.x + POKER_OFFSET_X - POKER_RANGE_MARGIN,
+    #         self.rect.y + POKER_OFFSET_Y - POKER_RANGE_MARGIN,
+    #         PLAYER_BALANCE_WIDTH + 2 * POKER_RANGE_MARGIN,
+    #         PLAYER_BALANCE_HEIGHT + 2 * POKER_RANGE_MARGIN)
+    #     if check_rect.x <= anchor_rect.x and anchor_rect.x <= (check_rect.x + check_rect.w) \
+    #         and check_rect.y <= anchor_rect.y and anchor_rect.y <= (check_rect.y + check_rect.h):
+    #         return True
+    #     else:
+    #         return False
 
     def get_pot(self):
         pot_left_rect = find_in_rect(POT_LEFT, self.rect)
@@ -99,73 +89,73 @@ class GameTable:
         return pot
 
     def get_cards(self):
-        table_cards = []
+        river_cards = []
         hand_cards = []
-        table_card_rect = Rect(self.rect.x + TABLE_CARD_OFFSET_X,
-            self.rect.y + TABLE_CARD_OFFSET_Y,
-            TABLE_CARD_WIDTH,
-            TABLE_CARD_HEIGHT)
+        river_rect = Rect(self.rect.x + RIVER_OFFSET_X,
+            self.rect.y + RIVER_OFFSET_Y,
+            RIVER_WIDTH,
+            RIVER_HEIGHT)
         card_anchors = find_all_in_rect(CARD_ANCHOR, self.rect)
         for card_anchor in card_anchors:
             card = self.__get_card(card_anchor)
-            if table_card_rect.is_point_in(card_anchor.x, card_anchor.y):
-                table_cards.append(card)
+            if river_rect.is_point_in(card_anchor.x, card_anchor.y):
+                river_cards.append(card)
             else:
                 hand_cards.append(card)
-        return (table_cards, hand_cards)
+        return (river_cards, hand_cards)
 
     def __get_card(self, anchor_rect):
-        color_rect = Rect(anchor_rect.x + CARD_COLOR_OFFSET_X,
-            anchor_rect.y + CARD_COLOR_OFFSET_Y,
-            CARD_COLOR_WIDTH,
-            CARD_COLOR_HEIGHT)
-        color = self.__get_card_color(color_rect)
-        if color is None:
+        suit_rect = Rect(anchor_rect.x + CARD_SUIT_OFFSET_X,
+            anchor_rect.y + CARD_SUIT_OFFSET_Y,
+            CARD_SUIT_WIDTH,
+            CARD_SUIT_HEIGHT)
+        suit = self.__get_card_suit(suit_rect)
+        if suit is None:
             return None
-        value_rect = Rect(anchor_rect.x + CARD_VALUE_OFFSET_X,
-            anchor_rect.y + CARD_VALUE_OFFSET_Y,
-            CARD_VALUE_WIDTH,
-            CARD_VALUE_HEIGHT)
-        value = self.__get_card_value(value_rect, color)
-        if value is None:
+        rank_rect = Rect(anchor_rect.x + CARD_RANK_OFFSET_X,
+            anchor_rect.y + CARD_RANK_OFFSET_Y,
+            CARD_RANK_WIDTH,
+            CARD_RANK_HEIGHT)
+        rank = self.__get_card_rank(rank_rect, suit)
+        if rank is None:
             return None
-        return (value, color)
+        return utils.get_card(suit, rank)
 
-    def __get_card_value(self, rect, color):
-        if color == 'S' or color == 'C':
-            color_index = 0
-        if color == 'D' or color == 'H':
-            color_index = 1
-        card_value_dict = {
-            'A': CARD_VALUE_A[color_index],
-            '2': CARD_VALUE_2[color_index],
-            '3': CARD_VALUE_3[color_index],
-            '4': CARD_VALUE_4[color_index],
-            '5': CARD_VALUE_5[color_index],
-            '6': CARD_VALUE_6[color_index],
-            '7': CARD_VALUE_7[color_index],
-            '8': CARD_VALUE_8[color_index],
-            '9': CARD_VALUE_9[color_index],
-            'T': CARD_VALUE_T[color_index],
-            'J': CARD_VALUE_J[color_index],
-            'Q': CARD_VALUE_Q[color_index],
-            'K': CARD_VALUE_K[color_index]
+    def __get_card_rank(self, rect, suit):
+        if suit == utils.SUIT_SPADE or suit == utils.SUIT_CLUB:
+            suit_index = 0
+        if suit == utils.SUIT_DIAMOND or suit == utils.SUIT_HEART:
+            suit_index = 1
+        card_rank_dict = {
+            utils.RANK_2: CARD_RANK_2[suit_index],
+            utils.RANK_3: CARD_RANK_3[suit_index],
+            utils.RANK_4: CARD_RANK_4[suit_index],
+            utils.RANK_5: CARD_RANK_5[suit_index],
+            utils.RANK_6: CARD_RANK_6[suit_index],
+            utils.RANK_7: CARD_RANK_7[suit_index],
+            utils.RANK_8: CARD_RANK_8[suit_index],
+            utils.RANK_9: CARD_RANK_9[suit_index],
+            utils.RANK_T: CARD_RANK_T[suit_index],
+            utils.RANK_J: CARD_RANK_J[suit_index],
+            utils.RANK_Q: CARD_RANK_Q[suit_index],
+            utils.RANK_K: CARD_RANK_K[suit_index],
+            utils.RANK_A: CARD_RANK_A[suit_index]
             }
-        value_index = batch_compare_rect(rect, list(card_value_dict.values()))
-        if value_index >= 0:
-            return list(card_value_dict.keys())[value_index]
+        rank_index = batch_compare_rect(rect, list(card_rank_dict.values()))
+        if rank_index >= 0:
+            return list(card_rank_dict.keys())[rank_index]
         return None
 
-    def __get_card_color(self, rect):
-        card_color_dict = {
-            'C': CARD_COLOR_C,
-            'D': CARD_COLOR_D,
-            'H': CARD_COLOR_H,
-            'S': CARD_COLOR_S
+    def __get_card_suit(self, rect):
+        card_suit_dict = {
+            utils.SUIT_CLUB: CARD_SUIT_C,
+            utils.SUIT_DIAMOND: CARD_SUIT_D,
+            utils.SUIT_HEART: CARD_SUIT_H,
+            utils.SUIT_SPADE: CARD_SUIT_S
             }
-        color_index = batch_compare_rect(rect, list(card_color_dict.values()))
-        if color_index >= 0:
-            return list(card_color_dict.keys())[color_index]
+        suit_index = batch_compare_rect(rect, list(card_suit_dict.values()))
+        if suit_index >= 0:
+            return list(card_suit_dict.keys())[suit_index]
         return None
 
     def get_avail_actions(self):

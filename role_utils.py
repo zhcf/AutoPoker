@@ -53,19 +53,6 @@ HT_TWO_PAIR = 2
 HT_ONE_PAIR = 1
 HT_HIGH_CARD = 0
 
-def sort_cards_by_value(cards):
-    return sorted(cards, key=functools.cmp_to_key(__card_value_cmp))
-
-def __card_value_cmp(c1, c2):
-    values = ['A','K','Q','J','T','9','8','7','6','5','4','3','2']
-    idx1 = values.index(c1[0])
-    idx2 = values.index(c2[0])
-    if idx1 > idx2:
-        return 1
-    if idx1 < idx2:
-        return -1
-    return 0
-
 def sort_actions(actions):
     return sorted(actions, key=functools.cmp_to_key(__action_cmp))
 
@@ -159,9 +146,6 @@ def get_hand_type(cards):
                 straight.append(rank)
             elif rank != straight[-1]:
                 straight = [rank]
-    print(suit_dict)
-    print(rank_dict)
-    print(straight)
     # Looking for available hand type
     for k, v in suit_dict.items():
         if v['count'] >= 5:

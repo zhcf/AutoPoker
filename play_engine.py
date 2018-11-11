@@ -50,12 +50,12 @@ class PlayEngine:
 
         temp_strs = []
         for card in table_cards:
-            temp_strs.append(str(card))
+            temp_strs.append(utils.format_card(card))
         logging.info(self.__unique_output("Table cards: %s" % ' '.join(temp_strs)))
 
         temp_strs = []
         for card in hand_cards:
-            temp_strs.append(str(card))
+            temp_strs.append(utils.format_card(card))
         logging.info(self.__unique_output("Hand cards: %s" % ' '.join(temp_strs)))
 
         logging.info(self.__unique_output("Pot: %f" % pot))
