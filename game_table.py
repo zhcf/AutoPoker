@@ -23,12 +23,13 @@ class GameTable:
             ACTION_BET, ACTION_RAISE_TO])
 
     def get_poker(self):
-        balance = self.__get_poker_balance()
+        poker_anchor = find_in_rect(POKER_ANCHOR, self.rect)
+        balance = self.__get_poker_balance(poker_anchor)
         return balance
 
-    def __get_poker_balance(self):
-        balance_rect = Rect(self.rect.x + POKER_BALANCE_OFFSET_X,
-            self.rect.y + POKER_BALANCE_OFFSET_Y,
+    def __get_poker_balance(self, anchor_rect):
+        balance_rect = Rect(anchor_rect.x + POKER_BALANCE_OFFSET_X,
+            anchor_rect.y + POKER_BALANCE_OFFSET_Y,
             BALANCE_WIDTH,
             BALANCE_HEIGHT)
         return get_number_from_rect(balance_rect)
