@@ -11,7 +11,7 @@ ACTION_BET = 'images/action_bet.png'
 ACTION_CALL = 'images/action_call.png'
 ACTION_CHECK = 'images/action_check.png'
 ACTION_FOLD = 'images/action_fold.png'
-ACTION_RAISE_TO = 'images/action_raise_to.png'
+ACTION_RAISE = 'images/action_raise.png'
 
 CARD_ANCHOR = 'images/card_anchor.png'
 CARD_SUIT_C = 'images/card_suit_c.png'

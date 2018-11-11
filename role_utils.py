@@ -60,7 +60,7 @@ def __action_cmp(a1, a2):
     return compare_action(a1.action, a2.action)
 
 def compare_action(a1, a2):
-    values = ['fold', 'check', 'call', 'bet', 'raise_to']
+    values = ['fold', 'check', 'call', 'bet', 'raise']
     idx1 = values.index(a1)
     idx2 = values.index(a2)
     if idx1 > idx2:

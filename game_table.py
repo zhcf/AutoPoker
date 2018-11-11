@@ -20,7 +20,7 @@ class GameTable:
     def wait_for_action(self):
         wait_for_any(self.rect, [BET_MIN, BET_MAX,
             ACTION_FOLD, ACTION_CHECK, ACTION_CALL,
-            ACTION_BET, ACTION_RAISE_TO])
+            ACTION_BET, ACTION_RAISE])
 
     def get_poker(self):
         poker_anchor = find_in_rect(POKER_ANCHOR, self.rect)
@@ -165,7 +165,7 @@ class GameTable:
             ('call', ACTION_CALL),
             ('check', ACTION_CHECK),
             ('fold', ACTION_FOLD),
-            ('raise_to', ACTION_RAISE_TO)]
+            ('raise', ACTION_RAISE)]
         for action in all_actions:
             action_rect = find_in_rect(action[1], self.rect)
             if action_rect is not None:
@@ -197,8 +197,8 @@ class GameTable:
         elif action.action == 'bet':
             #click_in_rect(self.rect, ACTION_BET)
             self.queue.put(('click', self.rect, ACTION_BET))
-        elif action.action == 'raise_to':
-            #click_in_rect(self.rect, ACTION_RAISE_TO)
-            self.queue.put(('click', self.rect, ACTION_RAISE_TO))
+        elif action.action == 'raise':
+            #click_in_rect(self.rect, ACTION_RAISE)
+            self.queue.put(('click', self.rect, ACTION_RAISE))
         else:
             logging.error("Invalid action: %s" % action.to_string())
