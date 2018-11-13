@@ -20,6 +20,6 @@ class Junior:
         hand_pair = '%s%s' % (format_card1[0], format_card2[0])
         try:
             self.BIG_PAIRS.index(hand_pair)
-            return 'bet'
+            return utils.DECISION_CALL
         except ValueError:
-            return 'fold'
+            return utils.DECISION_FOLD

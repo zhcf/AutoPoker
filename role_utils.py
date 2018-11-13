@@ -53,6 +53,10 @@ HT_TWO_PAIR = 2
 HT_ONE_PAIR = 1
 HT_HIGH_CARD = 0
 
+DECISION_FOLD = 'fold'
+DECISION_CALL = 'call'
+DECISION_RAISE = 'raise'
+
 def sort_actions(actions):
     return sorted(actions, key=functools.cmp_to_key(__action_cmp))
 
