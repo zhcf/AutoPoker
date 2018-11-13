@@ -20,7 +20,7 @@ class PlayEngine:
             poker = self.table.get_poker()
             self.__log_status(avail_actions, table_cards, hand_cards, pot, players, poker)
             # Get decision from poker
-            poker_decision = self.poker.on_turn(hand_cards, table_cards, pot)
+            poker_decision = self.poker.on_turn(hand_cards, table_cards, pot, players, poker)
             logging.info(self.__unique_output("Poker decision: %s" % poker_decision))
             # Transfer decision to action
             poker_action = self.__get_action_from_decision(poker_decision, avail_actions)

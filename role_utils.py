@@ -116,8 +116,25 @@ def __card_rank_cmp(card1, card2):
         return -1
     return 0
 
-def get_hand_type(cards):
+def get_hand_value(cards):
+    assert len(cards) >= 5
     sorted_cards = sort_cards_by_rank(cards)
+    hand_type = get_hand_type(cards, sorted = True)
+    # Only use the largest 5 cards
+    hand_value = hand_type * 100 * 100 * 100 * 100 * 100 + \
+        sorted_cards[0] * 100 * 100 * 100 * 100 + \
+        sorted_cards[1] * 100 * 100 * 100 + \
+        sorted_cards[2] * 100 * 100 + \
+        sorted_cards[3] * 100 + \
+        sorted_cards[4]
+    return hand_value
+
+def get_hand_type(cards, sorted = False):
+    assert len(cards) >= 5
+    if not sorted:
+        sorted_cards = sort_cards_by_rank(cards)
+    else:
+        sorted_cards = cards
     hand_types = []
     suit_dict = dict()
     rank_dict = dict()
