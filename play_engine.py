@@ -16,11 +16,12 @@ class PlayEngine:
             avail_actions = self.table.get_avail_actions()
             (table_cards, hand_cards) = self.table.get_cards()
             pot = self.table.get_pot()
+            bet = self.__get_bet_from_actions(avail_actions)
             players = self.table.get_players()
             poker = self.table.get_poker()
             self.__log_status(avail_actions, table_cards, hand_cards, pot, players, poker)
             # Get decision from poker
-            poker_decision = self.poker.on_turn(hand_cards, table_cards, pot, players, poker)
+            poker_decision = self.poker.on_turn(hand_cards, table_cards, pot, bet, players, poker)
             logging.info(self.__unique_output("Poker decision: %s" % poker_decision))
             # Transfer decision to action
             poker_action = self.__get_action_from_decision(poker_decision, avail_actions)
@@ -48,6 +49,16 @@ class PlayEngine:
 
     def __compare_decision_with_action(self, decision, action):
         return utils.compare_action(decision, action.action)
+
+    def __get_bet_from_actions(actions):
+        sorted_actions = utils.sort_actions(actions)
+        bets = []
+        for action in sort_actions:
+            if action.bet > 0:
+                bets.append(action.bet)
+        if len(bets) == 0:
+            return 0
+        return min(bets)
 
     def __log_status(self, actions, table_cards, hand_cards, pot, players, poker):
         temp_strs = []

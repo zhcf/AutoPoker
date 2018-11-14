@@ -4,12 +4,12 @@ import logging
 import role_utils as utils
 
 class GameAction:
-    def __init__(self, action, bet_amount):
+    def __init__(self, action, bet):
         self.action = action
-        self.bet_amount = bet_amount
+        self.bet = bet
 
     def to_string(self):
-        return "(%s, %f)" % (self.action, self.bet_amount)
+        return "(%s, %f)" % (self.action, self.bet)
 
 
 class GameTable:
@@ -170,19 +170,19 @@ class GameTable:
             action_rect = find_in_rect(action[1], self.rect)
             if action_rect is not None:
                 if action_rect.h < ACTION_HEIGHT:
-                    bet_amount = self.__get_action_bet_amount(action_rect)
-                    avail_actions.append(GameAction(action[0], bet_amount))
+                    bet = self.__get_action_bet(action_rect)
+                    avail_actions.append(GameAction(action[0], bet))
                 else:
                     avail_actions.append(GameAction(action[0], 0))
         return avail_actions
 
-    def __get_action_bet_amount(self, action_rect):
-        bet_amount_rect = Rect(action_rect.x,
+    def __get_action_bet(self, action_rect):
+        bet_rect = Rect(action_rect.x,
             action_rect.y + action_rect.h,
             action_rect.w,
             ACTION_HEIGHT - action_rect.h)
-        bet_amount = get_number_from_rect(bet_amount_rect)
-        return bet_amount
+        bet = get_number_from_rect(bet_rect)
+        return bet
 
     def do_action(self, action):
         if action.action == 'fold':
