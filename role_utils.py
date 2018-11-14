@@ -92,6 +92,12 @@ def parse_card(card_str):
             break
     return get_card(suit, rank)
 
+def parse_cards(card_str_list):
+    cards = []
+    for card_str in card_str_list:
+        cards.append(parse_card(card_str))
+    return cards
+
 def format_card(card):
     (suit, rank) = split_card(card)
     for mapping in RANK_MAPPINGS:
@@ -117,10 +123,9 @@ def __card_rank_cmp(card1, card2):
     return 0
 
 def get_hand_value(cards):
-    assert len(cards) >= 5
+    assert len(cards) == 5
     sorted_cards = sort_cards_by_rank(cards)
     hand_type = get_hand_type(cards, sorted = True)
-    # Only use the largest 5 cards
     hand_value = hand_type * 100 * 100 * 100 * 100 * 100 + \
         sorted_cards[0] * 100 * 100 * 100 * 100 + \
         sorted_cards[1] * 100 * 100 * 100 + \
@@ -130,7 +135,7 @@ def get_hand_value(cards):
     return hand_value
 
 def get_hand_type(cards, sorted = False):
-    assert len(cards) >= 5
+    assert len(cards) == 5
     if not sorted:
         sorted_cards = sort_cards_by_rank(cards)
     else:
