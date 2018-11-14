@@ -82,21 +82,30 @@ def get_card(suit, rank):
     return suit * 13 + rank
 
 def parse_card(card_str):
-    for mapping in RANK_MAPPINGS:
-        if mapping[1] == card_str[0]:
-            rank = mapping[0]
-            break
-    for mapping in SUIT_MAPPINGS:
-        if mapping[1] == card_str[1]:
-            suit = mapping[0]
-            break
-    return get_card(suit, rank)
+    rank = parse_rank(card_str[0])
+    suit = parse_suit(card_str[1])
+    if rank is None or suit is None:
+        return None
+    else:
+        return get_card(suit, rank)
 
 def parse_cards(card_str_list):
     cards = []
     for card_str in card_str_list:
         cards.append(parse_card(card_str))
     return cards
+
+def parse_rank(rank_char):
+    for mapping in RANK_MAPPINGS:
+        if mapping[1] == rank_char:
+            return mapping[0]
+    return None
+
+def parse_suit(suit_char):
+    for mapping in SUIT_MAPPINGS:
+        if mapping[1] == suit_char:
+            return mapping[0]
+    return None
 
 def format_card(card):
     (suit, rank) = split_card(card)

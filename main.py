@@ -3,6 +3,7 @@ from gui_control import *
 from game_table import *
 from play_engine import *
 from pokers.junior import Junior
+from pokers.calculator import Calculator
 import time
 import sys
 import logging
@@ -12,10 +13,13 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
-def start_play_engine(queue, engine_code, table_rect, poker):
+def start_play_engine(queue, engine_code, table_rect, poker_code):
     table = GameTable(table_rect, queue)
-    junior_poker = Junior()
-    engine = PlayEngine(engine_code, table, junior_poker)
+    if poker_code == 'junior':
+        poker = Junior()
+    elif poker_code == 'calculator':
+        poker = Calculator()
+    engine = PlayEngine(engine_code, table, poker)
     engine.play()
 
 if __name__=='__main__':
@@ -35,7 +39,7 @@ if __name__=='__main__':
         table_rect.h = TABLE_HEIGHT
         table_rect.w = TABLE_WIDTH
         print("Game table found in window: %s" % table_rect.to_string())
-        process = Process(target=start_play_engine, args=(queue, engine_code, table_rect, 'junior'))
+        process = Process(target=start_play_engine, args=(queue, engine_code, table_rect, 'calculator'))
         process.start()
         game_processes.append(process)
 

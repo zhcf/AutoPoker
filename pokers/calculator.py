@@ -34,13 +34,21 @@ class Calculator:
             ( [], [], [], ['43', '42']),
             ( [], [], [], ['32'])
         ]
+        self.DEFAULT_TRY_TIMES = 1000
 
     def on_turn(self, hand_cards, river_cards, pot, bet, players, poker):
         if bet == 0:
             return utils.DECISION_CALL
-        hand_strength = get_hand_strength()
+        if len(river_cards) <= 2:
+            hand_strength = self.get_startup_hand_strength(hand_cards)
+        else:
+            hand_strength = self.get_hand_strength(hand_cards, river_cards, len(players), self.DEFAULT_TRY_TIMES)
         pot_odds = bet / (pot + bet)
-        rate_of_return = hand_strengh / pot_odds
+        rate_of_return = hand_strength / pot_odds
+        print("STR:%f, ODDS=%f, ROR=%f" % (hand_strength, pot_odds, rate_of_return))
+        return self.__make_decision(rate_of_return)
+
+    def __make_decision(self, rate_of_return):
         bluff_rate = random.random()
         if rate_of_return < 0.8:
             if bluff_rate <= 0.95:
@@ -64,6 +72,28 @@ class Calculator:
                 return utils.DECISION_CALL
             else:
                 return utils.DECISION_RAISE
+
+    def get_startup_hand_strength(self, hand_cards):
+        assert len(hand_cards) == 2
+        sorted_hand_cards = utils.sort_cards_by_rank(hand_cards)
+        (suit1, rank1) = utils.split_card(sorted_hand_cards[0])
+        (suit2, rank2) = utils.split_card(sorted_hand_cards[1])
+        if rank1 == rank2:
+            mappings = [self.STARTUP_PAIR]
+        elif suit1 == suit2:
+            mappings = self.STARTUP_SAME_SUIT
+        else:
+            mappings = self.STARTUP_NO_SAME_SUIT
+        for mapping in mappings:
+            section_index = 0
+            for define_ranks_list in mapping:
+                for define_ranks in define_ranks_list:
+                    define_rank1 = utils.parse_rank(define_ranks[0])
+                    define_rank2 = utils.parse_rank(define_ranks[1])
+                    if define_rank1 == rank1 and define_rank2 == rank2:
+                        return self.STARTUP_STRENGTH[section_index]
+                section_index = section_index + 1
+        return None
 
     def get_hand_strength(self, hand_cards, river_cards, number_of_players, try_times):
         times = 0

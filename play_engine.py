@@ -50,10 +50,10 @@ class PlayEngine:
     def __compare_decision_with_action(self, decision, action):
         return utils.compare_action(decision, action.action)
 
-    def __get_bet_from_actions(actions):
+    def __get_bet_from_actions(self, actions):
         sorted_actions = utils.sort_actions(actions)
         bets = []
-        for action in sort_actions:
+        for action in sorted_actions:
             if action.bet > 0:
                 bets.append(action.bet)
         if len(bets) == 0:
