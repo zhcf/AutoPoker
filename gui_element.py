@@ -52,7 +52,8 @@ BET_MIN = 'images/bet_min.png'
 BET_MAX = 'images/bet_max.png'
 
 PLAYER_ANCHOR = 'images/player_anchor.png'
-PLAYER_BALANCE_OFFSET_X = -23
+PLAYER_BALANCE_LEFT_OFFSET_X = -23
+PLAYER_BALANCE_RIGHT_OFFSET_X = 26
 PLAYER_BALANCE_OFFSET_Y = 48
 
 POKER_ANCHOR = 'images/poker_anchor.png'

@@ -48,7 +48,11 @@ class GameTable:
         return "%dX%d" % (anchor_rect.x, anchor_rect.y)
 
     def __get_player_balance(self, anchor_rect):
-        balance_rect = Rect(anchor_rect.x + PLAYER_BALANCE_OFFSET_X,
+        if anchor_rect.x <= self.rect.x + self.rect.w / 2:
+            player_balance_offset_x = PLAYER_BALANCE_LEFT_OFFSET_X
+        else:
+            player_balance_offset_x = PLAYER_BALANCE_RIGHT_OFFSET_X
+        balance_rect = Rect(anchor_rect.x + player_balance_offset_x,
             anchor_rect.y + PLAYER_BALANCE_OFFSET_Y,
             BALANCE_WIDTH,
             BALANCE_HEIGHT)
