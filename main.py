@@ -7,14 +7,15 @@ from pokers.calculator import Calculator
 import time
 import sys
 import logging
+import argparse
 from multiprocessing import Process, Queue
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
-def start_play_engine(queue, engine_code, table_rect, poker_code):
-    table = GameTable(table_rect, queue)
+def start_play_engine(queue, engine_code, table_size, table_rect, poker_code):
+    table = GameTable(table_size, table_rect, queue)
     if poker_code == 'junior':
         poker = Junior()
     elif poker_code == 'calculator':
@@ -22,7 +23,7 @@ def start_play_engine(queue, engine_code, table_rect, poker_code):
     engine = PlayEngine(engine_code, table, poker)
     engine.play()
 
-if __name__=='__main__':
+def main(table_size, poker):
     game_processes = []
     queue = Queue()
     window_rects = find_all_in_screen(WINDOW_TOP_LEFT)
@@ -39,10 +40,10 @@ if __name__=='__main__':
         table_rect.h = TABLE_HEIGHT
         table_rect.w = TABLE_WIDTH
         print("Game table found in window: %s" % table_rect.to_string())
-        process = Process(target=start_play_engine, args=(queue, engine_code, table_rect, 'calculator'))
+        process = Process(target=start_play_engine, args=(queue, engine_code, table_size, table_rect, poker))
         process.start()
         game_processes.append(process)
-
+    # Get action from queue
     while True:
         try:
             gui_action = queue.get(timeout=2)
@@ -53,3 +54,10 @@ if __name__=='__main__':
                 logging.error("Invalid GUI action: %s" % gui_action[0])
         except:
             continue
+
+if __name__=='__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--table_size', required=True, type=int, help='The number of players in one table: 6 or 9')
+    parser.add_argument('--poker', required=True, help='The AI poker: junior, calculator.')
+    args = parser.parse_args()
+    main(args.table_size, args.poker)

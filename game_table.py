@@ -2,6 +2,7 @@ from gui_element import *
 from gui_control import *
 import logging
 import role_utils as utils
+import time
 
 class GameAction:
     def __init__(self, action, bet):
@@ -13,14 +14,17 @@ class GameAction:
 
 
 class GameTable:
-    def __init__(self, rect, queue):
+    def __init__(self, size, rect, queue):
         self.rect = rect
         self.queue = queue
+        self.size = size
 
     def wait_for_action(self):
         wait_for_any(self.rect, [BET_MIN, BET_MAX,
             ACTION_FOLD, ACTION_CHECK, ACTION_CALL,
             ACTION_BET, ACTION_RAISE])
+        # Wait 1 seconds for bet animation
+        time.sleep(1)
 
     def get_poker(self):
         poker_anchor = find_in_rect(POKER_ANCHOR, self.rect)
@@ -28,11 +32,15 @@ class GameTable:
         return balance
 
     def __get_poker_balance(self, anchor_rect):
-        balance_rect = Rect(anchor_rect.x + POKER_BALANCE_OFFSET_X,
+        if self.size == 6:
+            poker_balance_offset_x = POKER_BALANCE_LEFT_OFFSET_X
+        elif self.size == 9:
+            poker_balance_offset_x = POKER_BALANCE_RIGHT_OFFSET_X
+        balance_rect = Rect(anchor_rect.x + poker_balance_offset_x,
             anchor_rect.y + POKER_BALANCE_OFFSET_Y,
             BALANCE_WIDTH,
             BALANCE_HEIGHT)
-        return get_number_from_rect(balance_rect)
+        return self.__get_balance(balance_rect)
 
     def get_players(self):
         players = dict()
@@ -56,23 +64,17 @@ class GameTable:
             anchor_rect.y + PLAYER_BALANCE_OFFSET_Y,
             BALANCE_WIDTH,
             BALANCE_HEIGHT)
-        return get_number_from_rect(balance_rect)
-        # balance_str = get_string_from_rect(balance_rect)
-        # if balance_str == 'Sitting Out':
-        #     return None
-        # else:
-        #     return get_number_from_rect(balance_rect)
+        return self.__get_balance(balance_rect)
 
-    # def __is_poker_myself(self, anchor_rect):
-    #     check_rect = Rect(self.rect.x + POKER_OFFSET_X - POKER_RANGE_MARGIN,
-    #         self.rect.y + POKER_OFFSET_Y - POKER_RANGE_MARGIN,
-    #         PLAYER_BALANCE_WIDTH + 2 * POKER_RANGE_MARGIN,
-    #         PLAYER_BALANCE_HEIGHT + 2 * POKER_RANGE_MARGIN)
-    #     if check_rect.x <= anchor_rect.x and anchor_rect.x <= (check_rect.x + check_rect.w) \
-    #         and check_rect.y <= anchor_rect.y and anchor_rect.y <= (check_rect.y + check_rect.h):
-    #         return True
-    #     else:
-    #         return False
+    def __get_balance(self, rect):
+        try:
+            return get_number_from_rect(rect)
+        except Exception as e:
+            str = get_string_from_rect(rect)
+            if str.upper() == 'ALL IN':
+                return 0
+            else:
+                raise e
 
     def get_pot(self):
         pot_left_rect = find_in_rect(POT_LEFT, self.rect)

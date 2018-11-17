@@ -104,7 +104,7 @@ def get_number_from_rect(rect):
     region = Region(rect.x, rect.y, rect.w, rect.h)
     region.initScreen(g_screen)
     image_file = g_screen.capture(region).getFile()
-    # The OCR min height is 30
+    # The OCR min height is 27
     MIN_OCR_HEIGHT = 27
     if rect.h < MIN_OCR_HEIGHT:
         image = Image.open(image_file)
@@ -124,7 +124,7 @@ def get_string_from_rect(rect):
     region = Region(rect.x, rect.y, rect.w, rect.h)
     region.initScreen(g_screen)
     image_file = g_screen.capture(region).getFile()
-    # The OCR min height is 30
+    # The OCR min height is 27
     MIN_OCR_HEIGHT = 27
     if rect.h < MIN_OCR_HEIGHT:
         image = Image.open(image_file)
