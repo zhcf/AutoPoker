@@ -13,7 +13,7 @@ class Junior:
             'AK',
             'AQ']
 
-    def on_turn(self, hand_cards, river_cards, pot, bet, players, poker):
+    def on_turn(self, hand_cards, river_cards, pot, bet, opponents, poker):
         sorted_hand_cards = utils.sort_cards_by_rank(hand_cards)
         format_card1 = utils.format_card(sorted_hand_cards[0])
         format_card2 = utils.format_card(sorted_hand_cards[1])

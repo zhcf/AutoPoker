@@ -36,13 +36,13 @@ class Calculator:
         ]
         self.DEFAULT_TRY_TIMES = 1000
 
-    def on_turn(self, hand_cards, river_cards, pot, bet, players, poker):
+    def on_turn(self, hand_cards, river_cards, pot, bet, opponents, poker):
         if bet == 0:
             return utils.DECISION_CALL
         if len(river_cards) <= 2:
             hand_strength = self.get_startup_hand_strength(hand_cards)
         else:
-            hand_strength = self.get_hand_strength(hand_cards, river_cards, len(players), self.DEFAULT_TRY_TIMES)
+            hand_strength = self.get_hand_strength(hand_cards, river_cards, len(opponents), self.DEFAULT_TRY_TIMES)
         pot_odds = bet / (pot + bet)
         rate_of_return = hand_strength / pot_odds
         print("STR:%f, ODDS=%f, ROR=%f" % (hand_strength, pot_odds, rate_of_return))
@@ -95,7 +95,7 @@ class Calculator:
                 section_index = section_index + 1
         return None
 
-    def get_hand_strength(self, hand_cards, river_cards, number_of_players, try_times):
+    def get_hand_strength(self, hand_cards, river_cards, number_of_opponents, try_times):
         times = 0
         win_times = 0
         while times <= try_times:
@@ -108,19 +108,19 @@ class Calculator:
             for card in river_cards:
                 deck.remove(card)
             # Deal cards to Players
-            players_hand_cards = []
-            for i in range(number_of_players):
-                players_hand_cards.append((deck.pop(), deck.pop()))
+            opponents_hand_cards = []
+            for i in range(number_of_opponents):
+                opponents_hand_cards.append((deck.pop(), deck.pop()))
             # Get combination of river cards
             poker_hand_values = []
-            player_hand_values = []
+            opponent_hand_values = []
             for cards in itertools.combinations(river_cards, 3):
                 hand_value = utils.get_hand_value(list(hand_cards) + list(cards))
                 poker_hand_values.append(hand_value)
-                for player_hand_cards in players_hand_cards:
-                    hand_value = utils.get_hand_value(player_hand_cards + cards)
-                    player_hand_values.append(hand_value)
-            if max(poker_hand_values) > max(player_hand_values):
+                for opponent_hand_cards in opponents_hand_cards:
+                    hand_value = utils.get_hand_value(opponent_hand_cards + cards)
+                    opponent_hand_values.append(hand_value)
+            if max(poker_hand_values) > max(opponent_hand_values):
                 win_times = win_times + 1
             times = times + 1
         return win_times / times

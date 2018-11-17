@@ -13,6 +13,16 @@ class GameAction:
         return "(%s, %f)" % (self.action, self.bet)
 
 
+class GamePlayer:
+    def __init__(self, code, position, balance):
+        self.code = code
+        self.position = position
+        self.balance = balance
+
+    def to_string(self):
+        return ("(%s, %s, %f)" % (self.code, self.position, self.balance))
+
+
 class GameTable:
     def __init__(self, size, rect, queue):
         self.rect = rect
@@ -29,7 +39,8 @@ class GameTable:
     def get_poker(self):
         poker_anchor = find_in_rect(POKER_ANCHOR, self.rect)
         balance = self.__get_poker_balance(poker_anchor)
-        return balance
+        poker = GamePlayer('me', None, balance)
+        return poker
 
     def __get_poker_balance(self, anchor_rect):
         if self.size == 6:
@@ -42,26 +53,25 @@ class GameTable:
             BALANCE_HEIGHT)
         return self.__get_balance(balance_rect)
 
-    def get_players(self):
-        players = dict()
-        player_anchors = find_all_in_rect(PLAYER_ANCHOR, self.rect)
-        for anchor in player_anchors:
-            code = self.__get_player_identity(anchor)
-            balance = self.__get_player_balance(anchor)
-            if balance is not None:
-                players[code] = balance
-        return players
+    def get_opponents(self):
+        opponents = []
+        opponent_anchors = find_all_in_rect(OPPONENT_ANCHOR, self.rect)
+        for anchor in opponent_anchors:
+            code = self.__get_opponent_identity(anchor)
+            balance = self.__get_opponent_balance(anchor)
+            opponents.append(GamePlayer(code, None, balance))
+        return opponents
 
-    def __get_player_identity(self, anchor_rect):
+    def __get_opponent_identity(self, anchor_rect):
         return "%dX%d" % (anchor_rect.x, anchor_rect.y)
 
-    def __get_player_balance(self, anchor_rect):
+    def __get_opponent_balance(self, anchor_rect):
         if anchor_rect.x <= self.rect.x + self.rect.w / 2:
-            player_balance_offset_x = PLAYER_BALANCE_LEFT_OFFSET_X
+            balance_offset_x = OPPONENT_BALANCE_LEFT_OFFSET_X
         else:
-            player_balance_offset_x = PLAYER_BALANCE_RIGHT_OFFSET_X
-        balance_rect = Rect(anchor_rect.x + player_balance_offset_x,
-            anchor_rect.y + PLAYER_BALANCE_OFFSET_Y,
+            balance_offset_x = OPPONENT_BALANCE_RIGHT_OFFSET_X
+        balance_rect = Rect(anchor_rect.x + balance_offset_x,
+            anchor_rect.y + OPPONENT_BALANCE_OFFSET_Y,
             BALANCE_WIDTH,
             BALANCE_HEIGHT)
         return self.__get_balance(balance_rect)

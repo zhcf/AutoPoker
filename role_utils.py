@@ -57,6 +57,13 @@ DECISION_FOLD = 'fold'
 DECISION_CALL = 'call'
 DECISION_RAISE = 'raise'
 
+POSITION_SB = 'SB'
+POSITION_BB = 'BB'
+POSITION_UTG = 'UTG'
+POSITION_MP = 'MP'
+POSITION_CO = 'CO'
+POSITION_BTN = 'BTN'
+
 def sort_actions(actions):
     return sorted(actions, key=functools.cmp_to_key(__action_cmp))
 

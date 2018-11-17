@@ -17,11 +17,11 @@ class PlayEngine:
             (table_cards, hand_cards) = self.table.get_cards()
             pot = self.table.get_pot()
             bet = self.__get_bet_from_actions(avail_actions)
-            players = self.table.get_players()
+            opponents = self.table.get_opponents()
             poker = self.table.get_poker()
-            self.__log_status(avail_actions, table_cards, hand_cards, pot, players, poker)
+            self.__log_status(avail_actions, table_cards, hand_cards, pot, opponents, poker)
             # Get decision from poker
-            poker_decision = self.poker.on_turn(hand_cards, table_cards, pot, bet, players, poker)
+            poker_decision = self.poker.on_turn(hand_cards, table_cards, pot, bet, opponents, poker)
             logging.info(self.__unique_output("Poker decision: %s" % poker_decision))
             # Transfer decision to action
             poker_action = self.__get_action_from_decision(poker_decision, avail_actions)
@@ -60,7 +60,7 @@ class PlayEngine:
             return 0
         return min(bets)
 
-    def __log_status(self, actions, table_cards, hand_cards, pot, players, poker):
+    def __log_status(self, actions, table_cards, hand_cards, pot, opponents, poker):
         temp_strs = []
         for action in actions:
             temp_strs.append(action.to_string())
@@ -79,11 +79,11 @@ class PlayEngine:
         logging.info(self.__unique_output("Pot: %f" % pot))
 
         temp_strs = []
-        for player in players.items():
-            temp_strs.append("[%s]%f" % (player[0], player[1]))
-        logging.info(self.__unique_output("Players: %s" % ' '.join(temp_strs)))
+        for opponent in opponents:
+            temp_strs.append(opponent.to_string())
+        logging.info(self.__unique_output("Opponents: %s" % ' '.join(temp_strs)))
 
-        logging.info(self.__unique_output("Poker: %f" % poker))
+        logging.info(self.__unique_output("Poker: %s" % poker.to_string()))
 
     def __unique_output(self, output_str):
         return "[%s] %s" % (self.code, output_str)
