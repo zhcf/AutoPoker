@@ -66,3 +66,26 @@ BALANCE_WIDTH = 93
 BALANCE_HEIGHT = 22
 
 BTN_ANCHOR = 'images/position_btn.png'
+
+# The first is poker
+PLAYERS_6_REGION_LIST = [
+    (290, 325),
+    (15, 215),
+    (15, 55),
+    (290, 5),
+    (565, 215),
+    (565, 55)
+]
+PLAYERS_9_REGION_LIST = [
+    (285, 305),
+    (65, 285),
+    (-20, 150),
+    (0, 45),
+    (195, 5),
+    (385, 5),
+    (570, 45),
+    (595, 185),
+    (535, 285)
+]
+PLAYER_REGION_WIDTH = 220
+PLAYER_REGION_HEIGHT = 140

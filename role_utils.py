@@ -226,3 +226,27 @@ def get_hand_type(cards, sorted = False):
         hand_types.append(HT_HIGH_CARD)
     # Use the max hand type
     return max(hand_types)
+
+def get_player_positions(table_size):
+    assert table_size == 6 or table_size == 9
+    if table_size == 6:
+        return [
+            (POSITION_SB, 0),
+            (POSITION_BB, 0),
+            (POSITION_UTG, 0),
+            (POSITION_MP, 0),
+            (POSITION_CO, 0),
+            (POSITION_BTN, 0)
+        ]
+    if table_size == 9:
+        return [
+            (POSITION_SB, 0),
+            (POSITION_BB, 0),
+            (POSITION_UTG, 0),
+            (POSITION_UTG, 1),
+            (POSITION_MP, 0),
+            (POSITION_MP, 1),
+            (POSITION_MP, 2),
+            (POSITION_CO, 0),
+            (POSITION_BTN, 0)
+        ]

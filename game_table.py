@@ -21,8 +21,10 @@ class GamePlayer:
         self.balance = balance
 
     def to_string(self):
-        return ("(%s, %s, %f)" % (self.code, self.position, self.balance))
-
+        if self.position[1] > 0:
+            return ("(%s, %s+%d, %f)" % (self.code, self.position[0], self.position[1], self.balance))
+        else:
+            return ("(%s, %s, %f)" % (self.code, self.position[0], self.balance))
 
 class GameTable:
     def __init__(self, size, rect, queue):
@@ -38,25 +40,46 @@ class GameTable:
         time.sleep(1)
 
     def get_players(self):
-        poker = self.__get_poker()
-        opponents = self.__get_opponents()
+        players = []
+        poker = None
+        opponents = []
+        if self.size == 6:
+            player_regions = PLAYERS_6_REGION_LIST
+        elif self.size == 9:
+            player_regions = PLAYERS_9_REGION_LIST
+        assert player_regions is not None
+        # Set players
+        btn_exist = False
+        for player_region in player_regions:
+            player_region_rect = Rect(self.rect.x + player_region[0],
+                self.rect.y + player_region[1],
+                PLAYER_REGION_WIDTH,
+                PLAYER_REGION_HEIGHT)
+            player = None
+            if poker is None:
+                player = self.__get_poker(player_region_rect)
+                poker = player
+            else:
+                player = self.__get_opponent(player_region_rect)
+                opponents.append(player)
+            if player.position is not None and player.position[0] == utils.POSITION_BTN:
+                btn_exist = True
+            players.append(player)
         # Set position
-        btn_anchor = find_in_rect(BTN_ANCHOR, self.rect)
-        for opponent in opponents:
-            (length, angle) = self.__calc_length_and_angle(btn_anchor.x,
-                btn_anchor.y, opponent.position.x, opponent.position.y)
-            print('%s: (%f, %f)' % (opponent.code, length, angle))
+        assert btn_exist
+        while players[-1].position is None or players[-1].position[0] != utils.POSITION_BTN:
+            player = players.pop(0)
+            players.append(player)
+        positions = utils.get_player_positions(self.size)
+        for index, position in enumerate(positions):
+            players[index].position = position
         return (poker, opponents)
 
-    def __calc_length_and_angle(self, x0, y0, x, y):
-        length = math.sqrt(math.pow(x-x0, 2) + math.pow(y-y0, 2))
-        angle = math.acos((x - x0) / length)
-        return (length, angle)
-
-    def __get_poker(self):
-        poker_anchor = find_in_rect(POKER_ANCHOR, self.rect)
+    def __get_poker(self, region_rect):
+        poker_anchor = find_in_rect(POKER_ANCHOR, region_rect)
+        position = self.__get_btn_position(region_rect)
         balance = self.__get_poker_balance(poker_anchor)
-        poker = GamePlayer('me', poker_anchor, balance)
+        poker = GamePlayer('poker', position, balance)
         return poker
 
     def __get_poker_balance(self, anchor_rect):
@@ -70,14 +93,23 @@ class GameTable:
             BALANCE_HEIGHT)
         return self.__get_balance(balance_rect)
 
-    def __get_opponents(self):
-        opponents = []
-        opponent_anchors = find_all_in_rect(OPPONENT_ANCHOR, self.rect)
-        for anchor in opponent_anchors:
+    def __get_btn_position(self, region_rect):
+        position = None
+        btn_rect = find_in_rect(BTN_ANCHOR, region_rect)
+        if btn_rect is not None:
+            position = (utils.POSITION_BTN, 0)
+        return position
+
+    def __get_opponent(self, region_rect):
+        anchor = find_in_rect(OPPONENT_ANCHOR, region_rect)
+        if anchor is None:
+            code = None
+            balance = 0
+        else:
             code = self.__get_opponent_identity(anchor)
             balance = self.__get_opponent_balance(anchor)
-            opponents.append(GamePlayer(code, anchor, balance))
-        return opponents
+        position = self.__get_btn_position(region_rect)
+        return GamePlayer(code, position, balance)
 
     def __get_opponent_identity(self, anchor_rect):
         return "%dX%d" % (anchor_rect.x, anchor_rect.y)
