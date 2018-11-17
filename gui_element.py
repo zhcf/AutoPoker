@@ -5,6 +5,7 @@ WINDOW_HEIGHT = 577
 TABLE_TOP_LEFT = 'images/table_top_left.png'
 TABLE_WIDTH = 792
 TABLE_HEIGHT = 547
+TABLE_CENTER_OFFSET_Y = 233
 
 ACTION_HEIGHT = 41
 ACTION_BET = 'images/action_bet.png'
@@ -64,4 +65,4 @@ POKER_BALANCE_OFFSET_Y = -24
 BALANCE_WIDTH = 93
 BALANCE_HEIGHT = 22
 
-POSITION_BTN = 'images/position_btn.png'
+BTN_ANCHOR = 'images/position_btn.png'

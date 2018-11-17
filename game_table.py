@@ -3,6 +3,7 @@ from gui_control import *
 import logging
 import role_utils as utils
 import time
+import math
 
 class GameAction:
     def __init__(self, action, bet):
@@ -36,10 +37,26 @@ class GameTable:
         # Wait 1 seconds for bet animation
         time.sleep(1)
 
-    def get_poker(self):
+    def get_players(self):
+        poker = self.__get_poker()
+        opponents = self.__get_opponents()
+        # Set position
+        btn_anchor = find_in_rect(BTN_ANCHOR, self.rect)
+        for opponent in opponents:
+            (length, angle) = self.__calc_length_and_angle(btn_anchor.x,
+                btn_anchor.y, opponent.position.x, opponent.position.y)
+            print('%s: (%f, %f)' % (opponent.code, length, angle))
+        return (poker, opponents)
+
+    def __calc_length_and_angle(self, x0, y0, x, y):
+        length = math.sqrt(math.pow(x-x0, 2) + math.pow(y-y0, 2))
+        angle = math.acos((x - x0) / length)
+        return (length, angle)
+
+    def __get_poker(self):
         poker_anchor = find_in_rect(POKER_ANCHOR, self.rect)
         balance = self.__get_poker_balance(poker_anchor)
-        poker = GamePlayer('me', None, balance)
+        poker = GamePlayer('me', poker_anchor, balance)
         return poker
 
     def __get_poker_balance(self, anchor_rect):
@@ -53,13 +70,13 @@ class GameTable:
             BALANCE_HEIGHT)
         return self.__get_balance(balance_rect)
 
-    def get_opponents(self):
+    def __get_opponents(self):
         opponents = []
         opponent_anchors = find_all_in_rect(OPPONENT_ANCHOR, self.rect)
         for anchor in opponent_anchors:
             code = self.__get_opponent_identity(anchor)
             balance = self.__get_opponent_balance(anchor)
-            opponents.append(GamePlayer(code, None, balance))
+            opponents.append(GamePlayer(code, anchor, balance))
         return opponents
 
     def __get_opponent_identity(self, anchor_rect):
@@ -106,7 +123,7 @@ class GameTable:
         return pot
 
     def get_cards(self):
-        river_cards = []
+        community_cards = []
         hand_cards = []
         river_rect = Rect(self.rect.x + RIVER_OFFSET_X,
             self.rect.y + RIVER_OFFSET_Y,
@@ -116,10 +133,10 @@ class GameTable:
         for card_anchor in card_anchors:
             card = self.__get_card(card_anchor)
             if river_rect.is_point_in(card_anchor.x, card_anchor.y):
-                river_cards.append(card)
+                community_cards.append(card)
             else:
                 hand_cards.append(card)
-        return (river_cards, hand_cards)
+        return (community_cards, hand_cards)
 
     def __get_card(self, anchor_rect):
         suit_rect = Rect(anchor_rect.x + CARD_SUIT_OFFSET_X,

@@ -17,8 +17,7 @@ class PlayEngine:
             (table_cards, hand_cards) = self.table.get_cards()
             pot = self.table.get_pot()
             bet = self.__get_bet_from_actions(avail_actions)
-            opponents = self.table.get_opponents()
-            poker = self.table.get_poker()
+            (poker, opponents) = self.table.get_players()
             self.__log_status(avail_actions, table_cards, hand_cards, pot, opponents, poker)
             # Get decision from poker
             poker_decision = self.poker.on_turn(hand_cards, table_cards, pot, bet, opponents, poker)
@@ -69,12 +68,12 @@ class PlayEngine:
         temp_strs = []
         for card in table_cards:
             temp_strs.append(utils.format_card(card))
-        logging.info(self.__unique_output("Table cards: %s" % ' '.join(temp_strs)))
+        logging.info(self.__unique_output("Community Cards: %s" % ' '.join(temp_strs)))
 
         temp_strs = []
         for card in hand_cards:
             temp_strs.append(utils.format_card(card))
-        logging.info(self.__unique_output("Hand cards: %s" % ' '.join(temp_strs)))
+        logging.info(self.__unique_output("Hand Cards: %s" % ' '.join(temp_strs)))
 
         logging.info(self.__unique_output("Pot: %f" % pot))
 
