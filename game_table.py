@@ -27,10 +27,10 @@ class GamePlayer:
             return ("(%s, %s, %f)" % (self.code, self.position[0], self.balance))
 
 class GameTable:
-    def __init__(self, size, rect, queue):
+    def __init__(self, max_players, rect, queue):
         self.rect = rect
         self.queue = queue
-        self.size = size
+        self.max_players = max_players
 
     def wait_for_action(self):
         wait_for_any(self.rect, [BET_MIN, BET_MAX,
@@ -43,9 +43,9 @@ class GameTable:
         players = []
         poker = None
         opponents = []
-        if self.size == 6:
+        if self.max_players == 6:
             player_regions = PLAYERS_6_REGION_LIST
-        elif self.size == 9:
+        elif self.max_players == 9:
             player_regions = PLAYERS_9_REGION_LIST
         assert player_regions is not None
         # Set players
@@ -70,7 +70,7 @@ class GameTable:
         while players[-1].position is None or players[-1].position[0] != utils.POSITION_BTN:
             player = players.pop(0)
             players.append(player)
-        positions = utils.get_player_positions(self.size)
+        positions = utils.get_player_positions(self.max_players)
         for index, position in enumerate(positions):
             players[index].position = position
         return (poker, opponents)
@@ -83,9 +83,9 @@ class GameTable:
         return poker
 
     def __get_poker_balance(self, anchor_rect):
-        if self.size == 6:
+        if self.max_players == 6:
             poker_balance_offset_x = POKER_BALANCE_LEFT_OFFSET_X
-        elif self.size == 9:
+        elif self.max_players == 9:
             poker_balance_offset_x = POKER_BALANCE_RIGHT_OFFSET_X
         balance_rect = Rect(anchor_rect.x + poker_balance_offset_x,
             anchor_rect.y + POKER_BALANCE_OFFSET_Y,

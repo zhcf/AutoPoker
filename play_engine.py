@@ -3,8 +3,9 @@ import time
 import role_utils as utils
 
 class PlayEngine:
-    def __init__(self, code, table, poker):
+    def __init__(self, code, window, table, poker):
         self.code = code
+        self.window = window
         self.table = table
         self.poker = poker
 

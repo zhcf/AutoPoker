@@ -227,9 +227,9 @@ def get_hand_type(cards, sorted = False):
     # Use the max hand type
     return max(hand_types)
 
-def get_player_positions(table_size):
-    assert table_size == 6 or table_size == 9
-    if table_size == 6:
+def get_player_positions(number_of_players):
+    assert number_of_players == 6 or number_of_players == 9
+    if number_of_players == 6:
         return [
             (POSITION_SB, 0),
             (POSITION_BB, 0),
@@ -238,7 +238,7 @@ def get_player_positions(table_size):
             (POSITION_CO, 0),
             (POSITION_BTN, 0)
         ]
-    if table_size == 9:
+    if number_of_players == 9:
         return [
             (POSITION_SB, 0),
             (POSITION_BB, 0),

@@ -14,16 +14,16 @@ logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
 
 
-def start_play_engine(queue, engine_code, table_size, table_rect, poker_code):
-    table = GameTable(table_size, table_rect, queue)
+def start_play_engine(queue, engine_code, max_players, window_rect, table_rect, poker_code):
+    table = GameTable(max_players, table_rect, queue)
     if poker_code == 'junior':
         poker = Junior()
     elif poker_code == 'calculator':
         poker = Calculator()
-    engine = PlayEngine(engine_code, table, poker)
+    engine = PlayEngine(engine_code, window_rect, table, poker)
     engine.play()
 
-def main(table_size, poker):
+def main(max_players, poker):
     game_processes = []
     queue = Queue()
     window_rects = find_all_in_screen(WINDOW_TOP_LEFT)
@@ -40,7 +40,7 @@ def main(table_size, poker):
         table_rect.h = TABLE_HEIGHT
         table_rect.w = TABLE_WIDTH
         print("Game table found in window: %s" % table_rect.to_string())
-        process = Process(target=start_play_engine, args=(queue, engine_code, table_size, table_rect, poker))
+        process = Process(target=start_play_engine, args=(queue, engine_code, max_players, window_rect, table_rect, poker))
         process.start()
         game_processes.append(process)
     # Get action from queue
@@ -57,7 +57,7 @@ def main(table_size, poker):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--table_size', required=True, type=int, help='The number of players in one table: 6 or 9')
+    parser.add_argument('--max_players', required=True, type=int, help='The max number of players in one table: 6 or 9')
     parser.add_argument('--poker', required=True, help='The AI poker: junior, calculator.')
     args = parser.parse_args()
-    main(args.table_size, args.poker)
+    main(args.max_players, args.poker)
