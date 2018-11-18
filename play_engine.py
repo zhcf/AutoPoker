@@ -1,17 +1,26 @@
 import logging
 import time
 import role_utils as utils
+import uuid
+import os
+from gui_control import *
 
 class PlayEngine:
-    def __init__(self, code, window, table, poker):
+    def __init__(self, code, window, table, poker, log_dir):
         self.code = code
         self.window = window
         self.table = table
         self.poker = poker
+        self.log_dir = log_dir
 
     def play(self):
         while True:
             self.table.wait_for_action()
+            # Save screenshot
+            screenshot_basename = '%s.png' % uuid.uuid1()
+            screenshot_filename = os.path.join(self.log_dir, screenshot_basename)
+            capture_rect(self.window, screenshot_filename)
+            logging.info(self.__unique_output("Screenshot: %s" % screenshot_basename))
             # Get game status
             t1 = time.time()
             avail_actions = self.table.get_avail_actions()

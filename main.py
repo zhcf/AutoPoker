@@ -35,7 +35,7 @@ def start_play_engine(queue, engine_code, max_players, window_rect, table_rect, 
         poker = Junior()
     elif poker_code == 'calculator':
         poker = Calculator()
-    engine = PlayEngine(engine_code, window_rect, table, poker)
+    engine = PlayEngine(engine_code, window_rect, table, poker, log_dir)
     engine.play()
 
 def main(max_players, poker):

@@ -7,7 +7,7 @@ import logging
 import pytesseract
 import math
 import time
-
+import shutil
 
 # JRE_PATH = r'C:\Java\jre1.8.0_111\bin\server\jvm.dll'
 # SIKULI_PATH = r'D:\projects\AutoPoker\sikulixapi.jar'
@@ -205,3 +205,10 @@ def click_in_rect(rect, image_filename):
     except FindFailed:
         logging.debug("Can't click %s on %s." % (image_filename, rect.to_string()))
         return []
+
+def capture_rect(rect, image_filename):
+    global g_screen
+    region = Region(rect.x, rect.y, rect.w, rect.h)
+    region.initScreen(g_screen)
+    temp_image_file = g_screen.capture(region).getFile()
+    shutil.move(temp_image_file, image_filename)
