@@ -35,7 +35,7 @@ class PlayEngine:
             poker_action = self.__get_action_from_decision(poker_decision, avail_actions)
             self.logger.info("Real action: %s" % poker_action.to_string())
             t2 = time.time()
-            self.logger.info("Turn time: %d" % (t2 - t1))
+            self.logger.info("Turn time: %d seconds" % (t2 - t1))
             # Take action
             self.table.do_action(poker_action)
             time.sleep(2)

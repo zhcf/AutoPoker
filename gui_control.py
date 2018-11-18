@@ -24,6 +24,7 @@ FindFailed = JException(JClass('org.sikuli.script.FindFailed'))
 
 g_screen = Screen()
 
+
 class Rect:
     def __init__(self, x, y, w, h):
         self.x = x
@@ -39,6 +40,9 @@ class Rect:
             return True
         else:
             return False
+
+    def is_rect_in(self, rect):
+        return self.is_point_in(rect.x, rect.y) and self.is_point_in(rect.x + rect.w, rect.y + rect.h)
 
 
 def find_in_screen(image_filename):

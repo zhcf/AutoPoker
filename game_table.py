@@ -48,6 +48,9 @@ class GameTable:
         elif self.max_players == 9:
             player_regions = PLAYERS_9_REGION_LIST
         assert player_regions is not None
+        # Look for btn position
+        btn_anchor = find_in_rect(BTN_ANCHOR, self.rect)
+        assert btn_anchor is not None
         # Set players
         btn_exist = False
         for player_region in player_regions:
@@ -62,11 +65,12 @@ class GameTable:
             else:
                 player = self.__get_opponent(player_region_rect)
                 opponents.append(player)
-            if player.position is not None and player.position[0] == utils.POSITION_BTN:
+            if not btn_exist and player_region_rect.is_rect_in(btn_anchor):
+                player.position = (utils.POSITION_BTN, 0)
                 btn_exist = True
             players.append(player)
         # Set position
-        assert btn_exist
+        assert btn_exist == True
         while players[-1].position is None or players[-1].position[0] != utils.POSITION_BTN:
             player = players.pop(0)
             players.append(player)
@@ -77,9 +81,8 @@ class GameTable:
 
     def __get_poker(self, region_rect):
         poker_anchor = find_in_rect(POKER_ANCHOR, region_rect)
-        position = self.__get_btn_position(region_rect)
         balance = self.__get_poker_balance(poker_anchor)
-        poker = GamePlayer('poker', position, balance)
+        poker = GamePlayer('poker', None, balance)
         return poker
 
     def __get_poker_balance(self, anchor_rect):
@@ -93,13 +96,6 @@ class GameTable:
             BALANCE_HEIGHT)
         return self.__get_balance(balance_rect)
 
-    def __get_btn_position(self, region_rect):
-        position = None
-        btn_rect = find_in_rect(BTN_ANCHOR, region_rect)
-        if btn_rect is not None:
-            position = (utils.POSITION_BTN, 0)
-        return position
-
     def __get_opponent(self, region_rect):
         anchor = find_in_rect(OPPONENT_ANCHOR, region_rect)
         if anchor is None:
@@ -108,8 +104,7 @@ class GameTable:
         else:
             code = self.__get_opponent_identity(anchor)
             balance = self.__get_opponent_balance(anchor)
-        position = self.__get_btn_position(region_rect)
-        return GamePlayer(code, position, balance)
+        return GamePlayer(code, None, balance)
 
     def __get_opponent_identity(self, anchor_rect):
         return "%dX%d" % (anchor_rect.x, anchor_rect.y)
