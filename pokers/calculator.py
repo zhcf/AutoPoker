@@ -4,7 +4,12 @@ import itertools
 
 class Calculator:
     def __init__(self):
-        self.STARTUP_STRENGTH = (1.0, 0.5, 0.25, 0)
+        self.STARTUP_HOLD_POSITIONS = (
+            ['SB', 'BB', 'UTG', 'MP', 'CO', 'BTN'],
+            ['MP', 'CO', 'BTN'],
+            ['CO', 'BTN'],
+            []
+        )
         self.STARTUP_PAIR = ( ['AA', 'KK', 'QQ', 'JJ', 'TT', '99', '88', '77'], ['66', '55'], ['44', '33', '22'], [] )
         self.STARTUP_SAME_SUIT = [
             ( ['AK', 'AQ', 'AJ', 'AT'], ['A9', 'A8', 'A7', 'A6'], ['A5', 'A4', 'A3', 'A2'], [] ),
@@ -40,7 +45,12 @@ class Calculator:
         if bet == 0:
             return utils.DECISION_CALL
         if len(community_cards) <= 2:
-            hand_strength = self.get_startup_hand_strength(hand_cards)
+            hold_positions = self.get_startup_hold_positions(hand_cards)
+            try:
+                hold_positions.index(poker.position[0])
+                return utils.DECISION_CALL
+            except ValueError as e:
+                return utils.DECISION_FOLD                
         else:
             hand_strength = self.get_hand_strength(hand_cards, community_cards, len(opponents), self.DEFAULT_TRY_TIMES)
         pot_odds = bet / (pot + bet)
@@ -73,7 +83,7 @@ class Calculator:
             else:
                 return utils.DECISION_RAISE
 
-    def get_startup_hand_strength(self, hand_cards):
+    def get_startup_hold_positions(self, hand_cards):
         assert len(hand_cards) == 2
         sorted_hand_cards = utils.sort_cards_by_rank(hand_cards)
         (suit1, rank1) = utils.split_card(sorted_hand_cards[0])
@@ -91,7 +101,7 @@ class Calculator:
                     define_rank1 = utils.parse_rank(define_ranks[0])
                     define_rank2 = utils.parse_rank(define_ranks[1])
                     if define_rank1 == rank1 and define_rank2 == rank2:
-                        return self.STARTUP_STRENGTH[section_index]
+                        return self.STARTUP_HOLD_POSITIONS[section_index]
                 section_index = section_index + 1
         return None
 
