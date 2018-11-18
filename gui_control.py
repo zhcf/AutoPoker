@@ -8,6 +8,7 @@ import pytesseract
 import math
 import time
 import shutil
+import random
 
 # JRE_PATH = r'C:\Java\jre1.8.0_111\bin\server\jvm.dll'
 # SIKULI_PATH = r'D:\projects\AutoPoker\sikulixapi.jar'
@@ -200,12 +201,18 @@ def wait_for_any(rect, image_files):
                 return
         time.sleep(1)
 
-def click_in_rect(rect, image_filename):
+def click_in_rect(rect, image_filename, rand = True):
     global g_screen
     try:
         region = Region(rect.x, rect.y, rect.w, rect.h)
         region.initScreen(g_screen)
-        region.click(image_filename)
+        if not rand:
+            region.click(image_filename)
+        else:
+            match = region.find(image_filename)
+            click_region = Region(match.getX() + 5, match.getY() + 5, int((match.getW() - 10) * random.random()), int((match.getH() - 10) * random.random()))
+            click_region.initScreen(g_screen)
+            click_region.click()
     except FindFailed:
         logging.debug("Can't click %s on %s." % (image_filename, rect.to_string()))
         return []
