@@ -8,10 +8,25 @@ import time
 import sys
 import logging
 import argparse
+import os
 from multiprocessing import Process, Queue
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s')
+
+log_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'log')
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+log_filename = os.path.join(log_dir, 'auto_poker_%s.log' % time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time())))
+logging.basicConfig(level = logging.INFO,
+    format = '%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+    datefmt = '%a, %d %b %Y %H:%M:%S',
+    filename = log_filename,
+    filemode = 'w')
+
+console = logging.StreamHandler()
+console.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)
 
 
 def start_play_engine(queue, engine_code, max_players, window_rect, table_rect, poker_code):
@@ -30,16 +45,16 @@ def main(max_players, poker):
     for window_rect in window_rects:
         window_rect.h = WINDOW_HEIGHT
         window_rect.w = WINDOW_WIDTH
-        print("Game window found: %s" % window_rect.to_string())
+        logging.info("Game window found: %s" % window_rect.to_string())
         engine_code = '%dX%d' % (window_rect.x, window_rect.y)
 
         table_rect = find_in_rect(TABLE_TOP_LEFT, window_rect)
         if table_rect is None:
-            print("There is no game table in window.")
+            logging.warn("There is no game table in window.")
             continue
         table_rect.h = TABLE_HEIGHT
         table_rect.w = TABLE_WIDTH
-        print("Game table found in window: %s" % table_rect.to_string())
+        logging.info("Game table found in window: %s" % table_rect.to_string())
         process = Process(target=start_play_engine, args=(queue, engine_code, max_players, window_rect, table_rect, poker))
         process.start()
         game_processes.append(process)
