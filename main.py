@@ -17,25 +17,27 @@ if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 log_filename = os.path.join(log_dir, 'auto_poker_%s.log' % time.strftime("%Y%m%d_%H%M%S", time.gmtime(time.time())))
 logging.basicConfig(level = logging.INFO,
-    format = '%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+    format = '%(asctime)s [%(name)s] %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
     datefmt = '%a, %d %b %Y %H:%M:%S',
     filename = log_filename,
     filemode = 'w')
 
 console = logging.StreamHandler()
 console.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
+formatter = logging.Formatter('%(asctime)s [%(name)s] %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
 console.setFormatter(formatter)
 logging.getLogger('').addHandler(console)
 
 
-def start_play_engine(queue, engine_code, max_players, window_rect, table_rect, poker_code):
+def start_play_engine(queue, game_identity, max_players, window_rect, table_rect, poker_code):
+    logger = logging.getLogger(game_identity)
+    logger.log_dir = log_dir
     table = GameTable(max_players, table_rect, queue)
     if poker_code == 'junior':
-        poker = Junior()
+        poker = Junior(logger)
     elif poker_code == 'calculator':
-        poker = Calculator()
-    engine = PlayEngine(engine_code, window_rect, table, poker, log_dir)
+        poker = Calculator(logger)    
+    engine = PlayEngine(window_rect, table, poker, logger)
     engine.play()
 
 def main(max_players, poker):
@@ -46,8 +48,7 @@ def main(max_players, poker):
         window_rect.h = WINDOW_HEIGHT
         window_rect.w = WINDOW_WIDTH
         logging.info("Game window found: %s" % window_rect.to_string())
-        engine_code = '%dX%d' % (window_rect.x, window_rect.y)
-
+        game_identity = '%dX%d' % (window_rect.x, window_rect.y)
         table_rect = find_in_rect(TABLE_TOP_LEFT, window_rect)
         if table_rect is None:
             logging.warn("There is no game table in window.")
@@ -55,7 +56,7 @@ def main(max_players, poker):
         table_rect.h = TABLE_HEIGHT
         table_rect.w = TABLE_WIDTH
         logging.info("Game table found in window: %s" % table_rect.to_string())
-        process = Process(target=start_play_engine, args=(queue, engine_code, max_players, window_rect, table_rect, poker))
+        process = Process(target=start_play_engine, args=(queue, game_identity, max_players, window_rect, table_rect, poker))
         process.start()
         game_processes.append(process)
     # Get action from queue

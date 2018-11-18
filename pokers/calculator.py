@@ -3,7 +3,7 @@ import random
 import itertools
 
 class Calculator:
-    def __init__(self):
+    def __init__(self, logger):
         self.STARTUP_HOLD_POSITIONS = (
             ['SB', 'BB', 'UTG', 'MP', 'CO', 'BTN'],
             ['MP', 'CO', 'BTN'],
@@ -40,6 +40,7 @@ class Calculator:
             ( [], [], [], ['32'])
         ]
         self.DEFAULT_TRY_TIMES = 1000
+        self.logger = logger
 
     def on_turn(self, hand_cards, community_cards, pot, bet, opponents, poker):
         if bet == 0:
@@ -50,12 +51,12 @@ class Calculator:
                 hold_positions.index(poker.position[0])
                 return utils.DECISION_CALL
             except ValueError as e:
-                return utils.DECISION_FOLD                
+                return utils.DECISION_FOLD
         else:
             hand_strength = self.get_hand_strength(hand_cards, community_cards, len(opponents), self.DEFAULT_TRY_TIMES)
         pot_odds = bet / (pot + bet)
         rate_of_return = hand_strength / pot_odds
-        print("STR:%f, ODDS=%f, ROR=%f" % (hand_strength, pot_odds, rate_of_return))
+        self.logger.info("STR:%f, ODDS=%f, ROR=%f" % (hand_strength, pot_odds, rate_of_return))
         return self.__make_decision(rate_of_return)
 
     def __make_decision(self, rate_of_return):

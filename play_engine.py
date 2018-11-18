@@ -6,21 +6,20 @@ import os
 from gui_control import *
 
 class PlayEngine:
-    def __init__(self, code, window, table, poker, log_dir):
-        self.code = code
+    def __init__(self, window, table, poker, logger):
         self.window = window
         self.table = table
         self.poker = poker
-        self.log_dir = log_dir
+        self.logger = logger
 
     def play(self):
         while True:
             self.table.wait_for_action()
             # Save screenshot
             screenshot_basename = '%s.png' % uuid.uuid1()
-            screenshot_filename = os.path.join(self.log_dir, screenshot_basename)
+            screenshot_filename = os.path.join(self.logger.log_dir, screenshot_basename)
             capture_rect(self.window, screenshot_filename)
-            logging.info(self.__unique_output("Screenshot: %s" % screenshot_basename))
+            self.logger.info("Screenshot: %s" % screenshot_basename)
             # Get game status
             t1 = time.time()
             avail_actions = self.table.get_avail_actions()
@@ -31,12 +30,12 @@ class PlayEngine:
             self.__log_status(avail_actions, table_cards, hand_cards, pot, opponents, poker)
             # Get decision from poker
             poker_decision = self.poker.on_turn(hand_cards, table_cards, pot, bet, opponents, poker)
-            logging.info(self.__unique_output("Poker decision: %s" % poker_decision))
+            self.logger.info("Poker decision: %s" % poker_decision)
             # Transfer decision to action
             poker_action = self.__get_action_from_decision(poker_decision, avail_actions)
-            logging.info(self.__unique_output("Real action: %s" % poker_action.to_string()))
+            self.logger.info("Real action: %s" % poker_action.to_string())
             t2 = time.time()
-            logging.info(self.__unique_output("Turn time: %d" % (t2 - t1)))
+            self.logger.info("Turn time: %d" % (t2 - t1))
             # Take action
             self.table.do_action(poker_action)
             time.sleep(2)
@@ -73,26 +72,23 @@ class PlayEngine:
         temp_strs = []
         for action in actions:
             temp_strs.append(action.to_string())
-        logging.info(self.__unique_output("Actions: %s" % ' '.join(temp_strs)))
+        self.logger.info("Actions: %s" % ' '.join(temp_strs))
 
         temp_strs = []
         for card in table_cards:
             temp_strs.append(utils.format_card(card))
-        logging.info(self.__unique_output("Community Cards: %s" % ' '.join(temp_strs)))
+        self.logger.info("Community Cards: %s" % ' '.join(temp_strs))
 
         temp_strs = []
         for card in hand_cards:
             temp_strs.append(utils.format_card(card))
-        logging.info(self.__unique_output("Hand Cards: %s" % ' '.join(temp_strs)))
+        self.logger.info("Hand Cards: %s" % ' '.join(temp_strs))
 
-        logging.info(self.__unique_output("Pot: %f" % pot))
+        self.logger.info("Pot: %f" % pot)
 
         temp_strs = []
         for opponent in opponents:
             temp_strs.append(opponent.to_string())
-        logging.info(self.__unique_output("Opponents: %s" % ' '.join(temp_strs)))
+        self.logger.info("Opponents: %s" % ' '.join(temp_strs))
 
-        logging.info(self.__unique_output("Poker: %s" % poker.to_string()))
-
-    def __unique_output(self, output_str):
-        return "[%s] %s" % (self.code, output_str)
+        self.logger.info("Poker: %s" % poker.to_string())

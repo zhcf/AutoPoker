@@ -1,7 +1,7 @@
 import role_utils as utils
 
 class Junior:
-    def __init__(self):
+    def __init__(self, logger):
         self.BIG_PAIRS = ['AA',
             'KK',
             'QQ',
@@ -12,6 +12,7 @@ class Junior:
             '77',
             'AK',
             'AQ']
+        self.logger = logger
 
     def on_turn(self, hand_cards, community_cards, pot, bet, opponents, poker):
         sorted_hand_cards = utils.sort_cards_by_rank(hand_cards)
