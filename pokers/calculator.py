@@ -118,6 +118,13 @@ class Calculator:
             # Remove the cards that already deal to river
             for card in community_cards:
                 deck.remove(card)
+            # Fill community card to five
+            temp_community_cards = []
+            for i in range(5):
+                if i < len(community_cards):
+                    temp_community_cards.append(community_cards[i])
+                else:
+                    temp_community_cards.append(deck.pop())
             # Deal cards to Players
             opponents_hand_cards = []
             for i in range(number_of_opponents):
@@ -125,7 +132,7 @@ class Calculator:
             # Get combination of river cards
             poker_hand_values = []
             opponent_hand_values = []
-            for cards in itertools.combinations(community_cards, 3):
+            for cards in itertools.combinations(temp_community_cards, 3):
                 hand_value = utils.get_hand_value(list(hand_cards) + list(cards))
                 poker_hand_values.append(hand_value)
                 for opponent_hand_cards in opponents_hand_cards:

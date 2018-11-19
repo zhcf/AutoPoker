@@ -80,7 +80,12 @@ class GameTable:
         return (poker, opponents)
 
     def __get_poker(self, region_rect):
-        poker_anchor = find_in_rect(POKER_ANCHOR, region_rect)
+        poker_anchors = find_all_in_rect(POKER_ANCHOR, region_rect)
+        assert len(poker_anchors) == 2
+        if poker_anchors[0].x < poker_anchors[1].x:
+            poker_anchor = poker_anchors[0]
+        else:
+            poker_anchor = poker_anchors[1]
         balance = self.__get_poker_balance(poker_anchor)
         poker = GamePlayer('poker', None, balance)
         return poker
