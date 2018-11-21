@@ -1,4 +1,4 @@
-import role_utils as utils
+from game.roles import *
 
 class Junior:
     def __init__(self, logger):
@@ -15,12 +15,12 @@ class Junior:
         self.logger = logger
 
     def on_turn(self, hand_cards, community_cards, pot, bet, opponents, poker):
-        sorted_hand_cards = utils.sort_cards_by_rank(hand_cards)
-        format_card1 = utils.format_card(sorted_hand_cards[0])
-        format_card2 = utils.format_card(sorted_hand_cards[1])
+        sorted_hand_cards = sort_cards_by_rank(hand_cards)
+        format_card1 = format_card(sorted_hand_cards[0])
+        format_card2 = format_card(sorted_hand_cards[1])
         hand_pair = '%s%s' % (format_card1[0], format_card2[0])
         try:
             self.BIG_PAIRS.index(hand_pair)
-            return utils.DECISION_CALL
+            return DECISION_CALL
         except ValueError:
-            return utils.DECISION_FOLD
+            return DECISION_FOLD

@@ -1,9 +1,9 @@
 import logging
 import time
-import role_utils as utils
 import uuid
 import os
-from gui_control import *
+from gui.control import *
+from game.roles import *
 
 class PlayEngine:
     def __init__(self, window, table, poker, logger):
@@ -42,7 +42,7 @@ class PlayEngine:
 
     def __get_action_from_decision(self, decision, avail_actions):
         action = None
-        sorted_avail_actions = utils.sort_actions(avail_actions)
+        sorted_avail_actions = sort_actions(avail_actions)
         for avail_action in sorted_avail_actions:
             if self.__compare_decision_with_action(decision, avail_action) >= 0:
                 action = avail_action
@@ -56,10 +56,10 @@ class PlayEngine:
         return action
 
     def __compare_decision_with_action(self, decision, action):
-        return utils.compare_action(decision, action.action)
+        return compare_action(decision, action.action)
 
     def __get_bet_from_actions(self, actions):
-        sorted_actions = utils.sort_actions(actions)
+        sorted_actions = sort_actions(actions)
         bets = []
         for action in sorted_actions:
             if action.bet > 0:
@@ -76,12 +76,12 @@ class PlayEngine:
 
         temp_strs = []
         for card in table_cards:
-            temp_strs.append(utils.format_card(card))
+            temp_strs.append(format_card(card))
         self.logger.info("Community Cards: %s" % ' '.join(temp_strs))
 
         temp_strs = []
         for card in hand_cards:
-            temp_strs.append(utils.format_card(card))
+            temp_strs.append(format_card(card))
         self.logger.info("Hand Cards: %s" % ' '.join(temp_strs))
 
         self.logger.info("Pot: %f" % pot)

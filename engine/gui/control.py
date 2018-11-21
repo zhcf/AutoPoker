@@ -14,8 +14,10 @@ import random
 # SIKULI_PATH = r'D:\projects\AutoPoker\sikulixapi.jar'
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
-JRE_PATH = r'C:\Program Files\Java\jre1.8.0_191\bin\server\jvm.dll'
-SIKULI_PATH = r'D:\AutoPoker\sikulixapi.jar'
+# JRE_PATH = r'C:\Program Files\Java\jre1.8.0_191\bin\server\jvm.dll'
+# SIKULI_PATH = r'D:\AutoPoker\sikulixapi.jar'
+JRE_PATH = r'C:\Java\jdk1.8.0_181\jre\bin\server\jvm.dll'
+SIKULI_PATH = r'D:\projects\AutoPoker\sikulixapi.jar'
 
 startJVM(JRE_PATH, '-XX:MaxHeapSize=512m', '-Djava.class.path=%s' % SIKULI_PATH)
 
@@ -46,10 +48,13 @@ class Rect:
         return self.is_point_in(rect.x, rect.y) and self.is_point_in(rect.x + rect.w, rect.y + rect.h)
 
 
+def __get_real_image_path(image_path):
+    return './assert/images/%s' % image_path
+
 def find_in_screen(image_filename):
     global g_screen
     try:
-        match = g_screen.find(image_filename)
+        match = g_screen.find(__get_real_image_path(image_filename))
         return Rect(match.getX(), match.getY(), match.getW(), match.getH())
     except FindFailed:
         logging.debug("Can't find %s on screen." % image_filename)
@@ -58,7 +63,7 @@ def find_in_screen(image_filename):
 def find_all_in_screen(image_filename):
     global g_screen
     try:
-        match_iter = g_screen.findAll(image_filename)
+        match_iter = g_screen.findAll(__get_real_image_path(image_filename))
         result = []
         while match_iter.hasNext():
             match = match_iter.next()
@@ -67,7 +72,7 @@ def find_all_in_screen(image_filename):
         return result
     except FindFailed:
         logging.debug("Can't find %s on screen." % image_filename)
-        return None
+        return []
 
 def find_in_rect(image_filename, rect):
     global g_screen
@@ -78,7 +83,7 @@ def find_in_rect(image_filename, rect):
             rect.w + MARGIN * 2,
             rect.h + MARGIN *2)
         region.initScreen(g_screen)
-        match = region.find(image_filename)
+        match = region.find(__get_real_image_path(image_filename))
         return Rect(match.getX(), match.getY(), match.getW(), match.getH())
     except FindFailed:
         logging.debug("Can't find %s on %s." % (image_filename, rect.to_string()))
@@ -93,7 +98,7 @@ def find_all_in_rect(image_filename, rect):
             rect.w + MARGIN * 2,
             rect.h + MARGIN *2)
         region.initScreen(g_screen)
-        match_iter = region.findAll(image_filename)
+        match_iter = region.findAll(__get_real_image_path(image_filename))
         result = []
         while match_iter.hasNext():
             match = match_iter.next()
@@ -197,7 +202,7 @@ def wait_for_any(rect, image_files):
     region.initScreen(g_screen)
     while True:
         for image_file in image_files:
-            if region.exists(image_file):
+            if region.exists(__get_real_image_path(image_file)):
                 return
         time.sleep(1)
 
@@ -207,9 +212,9 @@ def click_in_rect(rect, image_filename, rand = True):
         region = Region(rect.x, rect.y, rect.w, rect.h)
         region.initScreen(g_screen)
         if not rand:
-            region.click(image_filename)
+            region.click(__get_real_image_path(image_filename))
         else:
-            match = region.find(image_filename)
+            match = region.find(__get_real_image_path(image_filename))
             click_region = Region(match.getX() + 5, match.getY() + 5, int((match.getW() - 10) * random.random()), int((match.getH() - 10) * random.random()))
             click_region.initScreen(g_screen)
             click_region.click()

@@ -1,9 +1,9 @@
-from gui_element import *
-from gui_control import *
 import logging
-import role_utils as utils
 import time
 import math
+from gui.control import *
+from game.elements import *
+from game.roles import *
 
 class GameAction:
     def __init__(self, action, bet):
@@ -66,15 +66,15 @@ class GameTable:
                 player = self.__get_opponent(player_region_rect)
                 opponents.append(player)
             if not btn_exist and player_region_rect.is_rect_in(btn_anchor):
-                player.position = (utils.POSITION_BTN, 0)
+                player.position = (POSITION_BTN, 0)
                 btn_exist = True
             players.append(player)
         # Set position
         assert btn_exist == True
-        while players[-1].position is None or players[-1].position[0] != utils.POSITION_BTN:
+        while players[-1].position is None or players[-1].position[0] != POSITION_BTN:
             player = players.pop(0)
             players.append(player)
-        positions = utils.get_player_positions(self.max_players)
+        positions = get_player_positions(self.max_players)
         for index, position in enumerate(positions):
             players[index].position = position
         return (poker, opponents)
@@ -185,27 +185,27 @@ class GameTable:
         rank = self.__get_card_rank(rank_rect, suit)
         if rank is None:
             return None
-        return utils.get_card(suit, rank)
+        return get_card(suit, rank)
 
     def __get_card_rank(self, rect, suit):
-        if suit == utils.SUIT_SPADE or suit == utils.SUIT_CLUB:
+        if suit == SUIT_SPADE or suit == SUIT_CLUB:
             suit_index = 0
-        if suit == utils.SUIT_DIAMOND or suit == utils.SUIT_HEART:
+        if suit == SUIT_DIAMOND or suit == SUIT_HEART:
             suit_index = 1
         card_rank_dict = {
-            utils.RANK_2: CARD_RANK_2[suit_index],
-            utils.RANK_3: CARD_RANK_3[suit_index],
-            utils.RANK_4: CARD_RANK_4[suit_index],
-            utils.RANK_5: CARD_RANK_5[suit_index],
-            utils.RANK_6: CARD_RANK_6[suit_index],
-            utils.RANK_7: CARD_RANK_7[suit_index],
-            utils.RANK_8: CARD_RANK_8[suit_index],
-            utils.RANK_9: CARD_RANK_9[suit_index],
-            utils.RANK_T: CARD_RANK_T[suit_index],
-            utils.RANK_J: CARD_RANK_J[suit_index],
-            utils.RANK_Q: CARD_RANK_Q[suit_index],
-            utils.RANK_K: CARD_RANK_K[suit_index],
-            utils.RANK_A: CARD_RANK_A[suit_index]
+            RANK_2: CARD_RANK_2[suit_index],
+            RANK_3: CARD_RANK_3[suit_index],
+            RANK_4: CARD_RANK_4[suit_index],
+            RANK_5: CARD_RANK_5[suit_index],
+            RANK_6: CARD_RANK_6[suit_index],
+            RANK_7: CARD_RANK_7[suit_index],
+            RANK_8: CARD_RANK_8[suit_index],
+            RANK_9: CARD_RANK_9[suit_index],
+            RANK_T: CARD_RANK_T[suit_index],
+            RANK_J: CARD_RANK_J[suit_index],
+            RANK_Q: CARD_RANK_Q[suit_index],
+            RANK_K: CARD_RANK_K[suit_index],
+            RANK_A: CARD_RANK_A[suit_index]
             }
         rank_index = batch_compare_rect(rect, list(card_rank_dict.values()))
         if rank_index >= 0:
@@ -214,10 +214,10 @@ class GameTable:
 
     def __get_card_suit(self, rect):
         card_suit_dict = {
-            utils.SUIT_CLUB: CARD_SUIT_C,
-            utils.SUIT_DIAMOND: CARD_SUIT_D,
-            utils.SUIT_HEART: CARD_SUIT_H,
-            utils.SUIT_SPADE: CARD_SUIT_S
+            SUIT_CLUB: CARD_SUIT_C,
+            SUIT_DIAMOND: CARD_SUIT_D,
+            SUIT_HEART: CARD_SUIT_H,
+            SUIT_SPADE: CARD_SUIT_S
             }
         suit_index = batch_compare_rect(rect, list(card_suit_dict.values()))
         if suit_index >= 0:

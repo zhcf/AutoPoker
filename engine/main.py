@@ -1,16 +1,14 @@
-from gui_element import *
-from gui_control import *
-from game_table import *
-from play_engine import *
-from pokers.junior import Junior
-from pokers.calculator import Calculator
 import time
 import sys
 import logging
 import argparse
 import os
 from multiprocessing import Process, Queue
-
+from game.elements import *
+from gui.control import *
+from game.table import GameTable
+from play_engine import PlayEngine
+from pokers import create_poker
 
 log_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'log')
 if not os.path.exists(log_dir):
@@ -33,10 +31,7 @@ def start_play_engine(queue, game_identity, max_players, window_rect, table_rect
     logger = logging.getLogger(game_identity)
     logger.log_dir = log_dir
     table = GameTable(max_players, table_rect, queue)
-    if poker_code == 'junior':
-        poker = Junior(logger)
-    elif poker_code == 'calculator':
-        poker = Calculator(logger)    
+    poker = create_poker(poker_code, logger)
     engine = PlayEngine(window_rect, table, poker, logger)
     engine.play()
 
@@ -44,6 +39,9 @@ def main(max_players, poker):
     game_processes = []
     queue = Queue()
     window_rects = find_all_in_screen(WINDOW_TOP_LEFT)
+    if len(window_rects) <= 0:
+        logging.error('No find any game window.')
+        return -1
     for window_rect in window_rects:
         window_rect.h = WINDOW_HEIGHT
         window_rect.w = WINDOW_WIDTH

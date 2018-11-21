@@ -1,6 +1,6 @@
-import role_utils as utils
 import random
 import itertools
+from game.roles import *
 
 class Calculator:
     def __init__(self, logger):
@@ -44,14 +44,14 @@ class Calculator:
 
     def on_turn(self, hand_cards, community_cards, pot, bet, opponents, poker):
         if bet == 0:
-            return utils.DECISION_CALL
+            return DECISION_CALL
         if len(community_cards) <= 2:
-            hold_positions = self.get_startup_hold_positions(hand_cards)
+            hold_positions = self.get_startup_hold_positions(hand_cards)            
             try:
                 hold_positions.index(poker.position[0])
-                return utils.DECISION_CALL
+                return DECISION_CALL
             except ValueError as e:
-                return utils.DECISION_FOLD
+                return DECISION_FOLD
         else:
             hand_strength = self.get_hand_strength(hand_cards, community_cards, len(opponents), self.DEFAULT_TRY_TIMES)
         pot_odds = bet / (pot + bet)
@@ -63,32 +63,32 @@ class Calculator:
         bluff_rate = random.random()
         if rate_of_return < 0.8:
             if bluff_rate <= 0.95:
-                return utils.DECISION_FOLD
+                return DECISION_FOLD
             else:
-                return utils.DECISION_RAISE
+                return DECISION_RAISE
         elif rate_of_return < 1.0:
             if bluff_rate <= 0.80:
-                return utils.DECISION_FOLD
+                return DECISION_FOLD
             elif bluff_rate <= 0.85:
-                return utils.DECISION_CALL
+                return DECISION_CALL
             else:
-                return utils.DECISION_RAISE
+                return DECISION_RAISE
         elif rate_of_return < 1.3:
             if bluff_rate <= 0.60:
-                return utils.DECISION_CALL
+                return DECISION_CALL
             else:
-                return utils.DECISION_RAISE
+                return DECISION_RAISE
         else:
             if bluff_rate <= 0.30:
-                return utils.DECISION_CALL
+                return DECISION_CALL
             else:
-                return utils.DECISION_RAISE
+                return DECISION_RAISE
 
     def get_startup_hold_positions(self, hand_cards):
         assert len(hand_cards) == 2
-        sorted_hand_cards = utils.sort_cards_by_rank(hand_cards)
-        (suit1, rank1) = utils.split_card(sorted_hand_cards[0])
-        (suit2, rank2) = utils.split_card(sorted_hand_cards[1])
+        sorted_hand_cards = sort_cards_by_rank(hand_cards)
+        (suit1, rank1) = split_card(sorted_hand_cards[0])
+        (suit2, rank2) = split_card(sorted_hand_cards[1])
         if rank1 == rank2:
             mappings = [self.STARTUP_PAIR]
         elif suit1 == suit2:
@@ -99,8 +99,8 @@ class Calculator:
             section_index = 0
             for define_ranks_list in mapping:
                 for define_ranks in define_ranks_list:
-                    define_rank1 = utils.parse_rank(define_ranks[0])
-                    define_rank2 = utils.parse_rank(define_ranks[1])
+                    define_rank1 = parse_rank(define_ranks[0])
+                    define_rank2 = parse_rank(define_ranks[1])
                     if define_rank1 == rank1 and define_rank2 == rank2:
                         return self.STARTUP_HOLD_POSITIONS[section_index]
                 section_index = section_index + 1
@@ -133,10 +133,10 @@ class Calculator:
             poker_hand_values = []
             opponent_hand_values = []
             for cards in itertools.combinations(temp_community_cards, 3):
-                hand_value = utils.get_hand_value(list(hand_cards) + list(cards))
+                hand_value = get_hand_value(list(hand_cards) + list(cards))
                 poker_hand_values.append(hand_value)
                 for opponent_hand_cards in opponents_hand_cards:
-                    hand_value = utils.get_hand_value(opponent_hand_cards + cards)
+                    hand_value = get_hand_value(opponent_hand_cards + cards)
                     opponent_hand_values.append(hand_value)
             if max(poker_hand_values) > max(opponent_hand_values):
                 win_times = win_times + 1
