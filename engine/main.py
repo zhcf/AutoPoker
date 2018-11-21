@@ -36,6 +36,8 @@ def start_play_engine(queue, game_identity, max_players, window_rect, table_rect
     engine.play()
 
 def main(max_players, poker):
+    logging.info("Max Players: %d" % max_players)
+    logging.info("Poker: %s" % poker)
     game_processes = []
     queue = Queue()
     window_rects = find_all_in_screen(WINDOW_TOP_LEFT)
