@@ -14,17 +14,19 @@ import random
 # SIKULI_PATH = r'D:\projects\AutoPoker\sikulixapi.jar'
 
 pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
-# JRE_PATH = r'C:\Program Files\Java\jre1.8.0_191\bin\server\jvm.dll'
-# SIKULI_PATH = r'D:\AutoPoker\sikulixapi.jar'
-JRE_PATH = r'C:\Java\jdk1.8.0_181\jre\bin\server\jvm.dll'
-SIKULI_PATH = r'D:\projects\AutoPoker\sikulixapi.jar'
+JRE_PATH = r'C:\Program Files\Java\jre1.8.0_191\bin\server\jvm.dll'
+SIKULI_PATH = r'D:\AutoPoker\sikulixapi.jar'
+# JRE_PATH = r'C:\Java\jdk1.8.0_181\jre\bin\server\jvm.dll'
+# SIKULI_PATH = r'D:\projects\AutoPoker\sikulixapi.jar'
 
 startJVM(JRE_PATH, '-XX:MaxHeapSize=512m', '-Djava.class.path=%s' % SIKULI_PATH)
 
+Settings = JClass('org.sikuli.basics.Settings')
 Screen = JClass('org.sikuli.script.Screen')
 Region = JClass('org.sikuli.script.Region')
 FindFailed = JException(JClass('org.sikuli.script.FindFailed'))
 
+Settings.AutoWaitTimeout = 0.0
 g_screen = Screen()
 
 
@@ -163,7 +165,7 @@ def batch_compare_rect(rect, image_files):
     rect_image_file = g_screen.capture(region).getFile()
     rect_image = Image.open(rect_image_file)
     for index, image_file in enumerate(image_files):
-        image = Image.open(image_file)
+        image = Image.open(__get_real_image_path(image_file))
         if __compare_image(rect_image, image):
             return index
     return -1
@@ -203,7 +205,7 @@ def wait_for_any(rect, image_files):
     while True:
         for image_file in image_files:
             if region.exists(__get_real_image_path(image_file)):
-                return
+                return image_file
         time.sleep(1)
 
 def click_in_rect(rect, image_filename, rand = True):

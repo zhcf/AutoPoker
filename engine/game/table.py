@@ -33,11 +33,17 @@ class GameTable:
         self.max_players = max_players
 
     def wait_for_action(self):
-        wait_for_any(self.rect, [BET_MIN, BET_MAX,
-            ACTION_FOLD, ACTION_CHECK, ACTION_CALL,
-            ACTION_BET, ACTION_RAISE])
+        found = wait_for_any(self.rect, [ACTION_FOLD, ACTION_CHECK, ACTION_CALL,
+            ACTION_BET, ACTION_RAISE] + [BUYIN_BACK])
         # Wait 1 seconds for bet animation
         time.sleep(1)
+        if found == BUYIN_BACK:
+            self.__buyin_and_back()
+            self.wait_for_action()
+
+    def __buyin_and_back(self):
+        self.queue.put(('click', self.rect, BUYIN_OK))
+        self.queue.put(('click', self.rect, BUYIN_BACK))
 
     def get_players(self):
         players = []

@@ -14,6 +14,9 @@ ACTION_CHECK = 'action_check.png'
 ACTION_FOLD = 'action_fold.png'
 ACTION_RAISE = 'action_raise.png'
 
+BUYIN_BACK = 'buyin_back.png'
+BUYIN_OK = 'buyin_ok.png'
+
 CARD_ANCHOR = 'card_anchor.png'
 CARD_SUIT_C = 'card_suit_c.png'
 CARD_SUIT_D = 'card_suit_d.png'
