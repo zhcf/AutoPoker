@@ -126,6 +126,12 @@ def format_card(card):
             break
     return '%s%s' % (rank_str, suit_str)
 
+def format_cards(cards):
+    result = []
+    for card in cards:
+        result.append(format_card(card))
+    return result
+
 def sort_cards_by_rank(cards):
     return sorted(cards, key=functools.cmp_to_key(__card_rank_cmp))
 
@@ -141,13 +147,13 @@ def __card_rank_cmp(card1, card2):
 def get_hand_value(cards):
     assert len(cards) == 5
     sorted_cards = sort_cards_by_rank(cards)
-    hand_type = get_hand_type(cards, sorted = True)
+    hand_type = get_hand_type(sorted_cards, sorted = True)
     hand_value = hand_type * 100 * 100 * 100 * 100 * 100 + \
-        sorted_cards[0] * 100 * 100 * 100 * 100 + \
-        sorted_cards[1] * 100 * 100 * 100 + \
-        sorted_cards[2] * 100 * 100 + \
-        sorted_cards[3] * 100 + \
-        sorted_cards[4]
+        split_card(sorted_cards[0])[1] * 100 * 100 * 100 * 100 + \
+        split_card(sorted_cards[1])[1] * 100 * 100 * 100 + \
+        split_card(sorted_cards[2])[1] * 100 * 100 + \
+        split_card(sorted_cards[3])[1] * 100 + \
+        split_card(sorted_cards[4])[1]
     return hand_value
 
 def get_hand_type(cards, sorted = False):

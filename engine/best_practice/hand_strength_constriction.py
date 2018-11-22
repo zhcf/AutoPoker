@@ -1,6 +1,6 @@
 import sys
 sys.path.append("..")
-import role_utils as utils
+from game.roles import *
 import random
 import itertools
 import math
@@ -15,11 +15,14 @@ THREE_OF_A_KIND = ['JD', 'JC', 'JH', '5C', '8D']
 HT_TWO_PAIR = ['6S', '6C', 'TC', 'TD', 'KD']
 ONE_PAIR = ['2D', '6H', '8S', 'AC', 'AH']
 HIGH_CARD = ['KH', 'JS', 'TC', '6H','3D']
+ISSUE_1 = ['AS', 'AH', 'KD', '6H', '4C']
+ISSUE_2 = ['AD', 'AH', '7H', 'JS', '9H', '4S', '8D']
 
 if __name__=='__main__':
-    hand_cards = utils.parse_cards(FLUSH[3:])
-    community_cards = utils.parse_cards(FLUSH[:3])
-    number_of_opponents = 1
+    hand_cards = parse_cards(ISSUE_2[:2])
+    community_cards = parse_cards(ISSUE_2[2:])
+    fill_community_cards = True
+    number_of_opponents = 5
     try_times = math.pow(100, 4)
     times = 0
     win_times = 0
@@ -34,12 +37,15 @@ if __name__=='__main__':
         for card in community_cards:
             deck.remove(card)
         # Fill community card to five
-        temp_community_cards = []
-        for i in range(5):
-            if i < len(community_cards):
-                temp_community_cards.append(community_cards[i])
-            else:
-                temp_community_cards.append(deck.pop())
+        if fill_community_cards:
+            temp_community_cards = []
+            for i in range(5):
+                if i < len(community_cards):
+                    temp_community_cards.append(community_cards[i])
+                else:
+                    temp_community_cards.append(deck.pop())
+        else:
+            temp_community_cards = community_cards
         # Deal cards to Players
         opponents_hand_cards = []
         for i in range(number_of_opponents):
@@ -49,12 +55,14 @@ if __name__=='__main__':
         poker_hand_values = []
         opponent_hand_values = []
         for cards in itertools.combinations(temp_community_cards, 3):
-            hand_value = utils.get_hand_value(list(hand_cards) + list(cards))
-            #print("Poker:%d" % hand_value)
+            # print(format_cards(cards))
+            hand_value = get_hand_value(list(hand_cards) + list(cards))
+            # print("Poker:%d" % hand_value)
             poker_hand_values.append(hand_value)
             for opponent_hand_cards in opponents_hand_cards:
-                hand_value = utils.get_hand_value(opponent_hand_cards + cards)
-                #print("Opponent:%d" % hand_value)
+                # print(format_cards(opponent_hand_cards))
+                hand_value = get_hand_value(opponent_hand_cards + cards)
+                # print("Opponent:%d" % hand_value)
                 opponent_hand_values.append(hand_value)
         if max(poker_hand_values) > max(opponent_hand_values):
             win_times = win_times + 1
