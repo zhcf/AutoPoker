@@ -24,6 +24,7 @@ startJVM(JRE_PATH, '-XX:MaxHeapSize=512m', '-Djava.class.path=%s' % SIKULI_PATH)
 Settings = JClass('org.sikuli.basics.Settings')
 Screen = JClass('org.sikuli.script.Screen')
 Region = JClass('org.sikuli.script.Region')
+Key = JClass('org.sikuli.script.Key')
 FindFailed = JException(JClass('org.sikuli.script.FindFailed'))
 
 Settings.AutoWaitTimeout = 0.0
@@ -230,3 +231,36 @@ def capture_rect(rect, image_filename):
     region.initScreen(g_screen)
     temp_image_file = g_screen.capture(region).getFile()
     shutil.move(temp_image_file, image_filename)
+
+def input_in_rect(rect, number, clear_first = True):
+    global g_screen
+    region = Region(rect.x, rect.y, rect.w, rect.h)
+    region.initScreen(g_screen)
+    region.click()
+    if clear_first:
+        for i in range(10):
+            region.type(Key.DELETE)
+    num_str = str(number)
+    for char in num_str:
+        if char == '0':
+            region.type(Key.NUM0)
+        elif char == '1':
+            region.type(Key.NUM1)
+        elif char == '2':
+            region.type(Key.NUM2)
+        elif char == '3':
+            region.type(Key.NUM3)
+        elif char == '4':
+            region.type(Key.NUM4)
+        elif char == '5':
+            region.type(Key.NUM5)
+        elif char == '6':
+            region.type(Key.NUM6)
+        elif char == '7':
+            region.type(Key.NUM7)
+        elif char == '8':
+            region.type(Key.NUM8)
+        elif char == '9':
+            region.type(Key.NUM9)
+        else:
+            raise Exception("Invalid number char %s" % char)

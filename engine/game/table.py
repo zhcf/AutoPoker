@@ -258,20 +258,25 @@ class GameTable:
         return bet
 
     def do_action(self, action):
+        bet_rect = Rect(self.rect.x + BET_INPUT_OFFSET_X,
+            self.rect.y + BET_INPUT_OFFSET_Y,
+            BET_INPUT_WIDTH,
+            BET_INPUT_HEIGHT)
         if action.action == 'fold':
-            #click_in_rect(self.rect, ACTION_FOLD)
             self.queue.put(('click', self.rect, ACTION_FOLD))
         elif action.action == 'check':
-            #click_in_rect(self.rect, ACTION_CHECK)
             self.queue.put(('click', self.rect, ACTION_CHECK))
         elif action.action == 'call':
-            #click_in_rect(self.rect, ACTION_CALL)
             self.queue.put(('click', self.rect, ACTION_CALL))
         elif action.action == 'bet':
-            #click_in_rect(self.rect, ACTION_BET)
             self.queue.put(('click', self.rect, ACTION_BET))
         elif action.action == 'raise':
-            #click_in_rect(self.rect, ACTION_RAISE)
+            self.queue.put(('click', self.rect, ACTION_RAISE))
+        elif action.action == 'bet_to':
+            self.queue.put(('input', bet_rect, action.bet))
+            self.queue.put(('click', self.rect, ACTION_BET))
+        elif action.action == 'raise_to':
+            self.queue.put(('input', bet_rect, action.bet))
             self.queue.put(('click', self.rect, ACTION_RAISE))
         else:
             logging.error("Invalid action: %s" % action.to_string())

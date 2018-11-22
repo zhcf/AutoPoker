@@ -66,6 +66,8 @@ def main(max_players, poker):
             if gui_action[0] == 'click':
                 click_in_rect(gui_action[1], gui_action[2])
                 time.sleep(0.5)
+            if gui_action[0] == 'input':
+                input_in_rect(gui_action[1], gui_action[2])
             else:
                 logging.error("Invalid GUI action: %s" % gui_action[0])
         except:

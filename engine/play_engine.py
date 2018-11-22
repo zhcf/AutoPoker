@@ -4,6 +4,7 @@ import uuid
 import os
 from gui.control import *
 from game.roles import *
+from game.table import GameAction
 
 class PlayEngine:
     def __init__(self, window, table, poker, logger):
@@ -29,10 +30,20 @@ class PlayEngine:
             (poker, opponents) = self.table.get_players()
             self.__log_status(avail_actions, table_cards, hand_cards, pot, opponents, poker)
             # Get decision from poker
-            poker_decision = self.poker.on_turn(hand_cards, table_cards, pot, bet, opponents, poker)
-            self.logger.info("Poker decision: %s" % poker_decision)
+            decision = self.poker.on_turn(hand_cards, table_cards, pot, bet, opponents, poker)
+            if not isinstance(decision, tuple):
+                poker_decision = decision
+                poker_bet = None
+                self.logger.info("Poker decision: %s" % poker_decision)
+            else:
+                poker_decision = decision[0]
+                poker_bet = decision[1]
+                self.logger.info("Poker decision: %s, %f" % (poker_decision, poker_bet))
             # Transfer decision to action
             poker_action = self.__get_action_from_decision(poker_decision, avail_actions)
+            if poker_action.action == 'bet' or poker_action.action == 'raise':
+                if poker_bet is not None and poker_bet != poker_action.bet:
+                    poker_action = GameAction(poker_action.action + '_to', poker_bet)
             self.logger.info("Real action: %s" % poker_action.to_string())
             t2 = time.time()
             self.logger.info("Turn time: %d seconds" % (t2 - t1))

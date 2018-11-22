@@ -46,7 +46,7 @@ class Calculator:
         if bet == 0:
             return DECISION_CALL
         if len(community_cards) <= 2:
-            hold_positions = self.get_startup_hold_positions(hand_cards)            
+            hold_positions = self.get_startup_hold_positions(hand_cards)
             try:
                 hold_positions.index(poker.position[0])
                 return DECISION_CALL
