@@ -27,10 +27,11 @@ class GamePlayer:
             return ("(%s, %s, %f)" % (self.code, self.position[0], self.balance))
 
 class GameTable:
-    def __init__(self, max_players, rect, queue):
+    def __init__(self, max_players, rect, queue, logger):
         self.rect = rect
         self.queue = queue
         self.max_players = max_players
+        self.logger = logger
 
     def wait_for_action(self):
         found = wait_for_any(self.rect, [ACTION_FOLD, ACTION_CHECK, ACTION_CALL,
@@ -139,7 +140,8 @@ class GameTable:
             if str.upper() == 'ALL IN':
                 return 0
             else:
-                raise e
+                self.logger.error('Unknown balance %s' % str)
+                return 0
 
     def get_pot(self):
         pot_left_rect = find_in_rect(POT_LEFT, self.rect)

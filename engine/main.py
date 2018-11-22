@@ -30,7 +30,7 @@ logging.getLogger('').addHandler(console)
 def start_play_engine(queue, game_identity, max_players, window_rect, table_rect, poker_code):
     logger = logging.getLogger(game_identity)
     logger.log_dir = log_dir
-    table = GameTable(max_players, table_rect, queue)
+    table = GameTable(max_players, table_rect, queue, logger)
     poker = create_poker(poker_code, logger)
     engine = PlayEngine(window_rect, table, poker, logger)
     engine.play()
